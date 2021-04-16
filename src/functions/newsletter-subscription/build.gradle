@@ -1,0 +1,68 @@
+plugins {
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("io.micronaut.application") version "1.4.2"
+}
+
+version = "0.1"
+group = "newsletter.subscription"
+
+repositories {
+    mavenCentral()
+    maven { url "https://dl.bintray.com/fnproject/fnproject" }
+}
+
+micronaut {
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("newsletter.subscription.*")
+    }
+}
+
+dependencies {
+    implementation("io.micronaut:micronaut-context")
+    implementation("io.micronaut:micronaut-validation")
+    implementation 'javax.mail:mail:1.5.0-b01'
+    implementation("io.micronaut.oraclecloud:micronaut-oraclecloud-function") {
+        exclude module:'micronaut-oraclecloud-common'
+    }
+    implementation("com.fnproject.fn:api")
+    runtimeOnly("com.fnproject.fn:runtime")
+    testImplementation("com.fnproject.fn:testing-junit4")
+    runtimeOnly("org.slf4j:slf4j-simple")
+    testImplementation("io.micronaut:micronaut-http-client")
+}
+
+
+application {
+    mainClass.set("com.fnproject.fn.runtime.EntryPoint")
+}
+java {
+    sourceCompatibility = JavaVersion.toVersion("11")
+    targetCompatibility = JavaVersion.toVersion("11")
+}
+
+
+nativeImage {
+    args("--static",
+         "-Dfn.handler=newsletter.subscription.Function::handleRequest",
+         "--initialize-at-build-time=newsletter.subscription")
+}
+
+dockerfileNative {
+    args("-XX:MaximumHeapSizePercent=80")
+    buildStrategy.set(io.micronaut.gradle.docker.DockerBuildStrategy.ORACLE_FUNCTION)
+    defaultCommand.set("newsletter.subscription.Function::handleRequest")
+}
+
+dockerfile {
+    buildStrategy.set(io.micronaut.gradle.docker.DockerBuildStrategy.ORACLE_FUNCTION)
+    defaultCommand.set("newsletter.subscription.Function::handleRequest")
+}
+dockerBuild {
+    images = ["iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/$project.name:$project.version"]
+}
+
+dockerBuildNative {
+    images = ["iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/${project.name}-native:$project.version"]
+}
