@@ -1,18 +1,30 @@
+micronaut:
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+        descriptions: true
+        step: PT1M
+      oraclecloud:
+        enabled: true
+        namespace: ${ORACLECLOUD_METRICS_NAMESPACE:micronaut-mushop}
+        resourceGroup: ${ORACLECLOUD_METRICS_RESOURCEGROUP:mushop-events}
 kafka:
   bootstrap:
-    servers: streaming.${REGION}.oci.oraclecloud.com:9092
+    servers: ${ORACLECLOUD_KAFKA_BOOTSTRAP_SERVERS}
   security:
     protocol: SASL_SSL
   sasl:
     mechanism: PLAIN
     jaas:
-      config: ${KAFKA_SASL_JAAS_CONFIG}
+      config: ${ORACLECLOUD_KAFKA_SASL_JAAS_CONFIG}$
 tracing:
   zipkin:
     enabled: true
     sampler:
       probability: 1
     http:
-      url: ${OCI_TRACING_UPLOAD_URL}
-      path: /20200101/observations/public-span?dataFormat=zipkin&dataFormatVersion=2&dataKey=${OCI_TRACING_PUBLIC_KEY}
+      url: ${ORACLECLOUD_TRACING_ZIPKIN_HTTP_URL}
+      path: ${ORACLECLOUD_TRACING_ZIPKIN_HTTP_PATH}
     supportsJoin: false
