@@ -1,0 +1,61 @@
+plugins {
+    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("io.micronaut.application") version "1.4.2"
+}
+
+version = "0.1"
+group = "events"
+
+repositories {
+    mavenCentral()
+}
+
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("events.*")
+    }
+}
+
+dependencies {
+    annotationProcessor("io.micronaut.openapi:micronaut-openapi")
+    implementation("io.swagger.core.v3:swagger-annotations")
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut:micronaut-management")
+    implementation("io.micronaut:micronaut-runtime")
+    implementation("io.micronaut:micronaut-tracing")
+    implementation("io.micronaut.micrometer:micronaut-micrometer-core")
+    implementation("io.micronaut.micrometer:micronaut-micrometer-registry-prometheus")
+    implementation("io.opentracing.brave:brave-opentracing")
+    runtimeOnly("io.zipkin.brave:brave-instrumentation-http")
+    runtimeOnly("io.zipkin.reporter2:zipkin-reporter")
+    implementation("io.micronaut:micronaut-validation")
+    implementation("io.micronaut.kafka:micronaut-kafka")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    testImplementation "org.testcontainers:testcontainers:1.15.2"
+    testImplementation "org.testcontainers:kafka:1.15.2"
+    testImplementation "org.testcontainers:junit-jupiter:1.15.2"
+    testImplementation 'org.awaitility:awaitility:4.0.3'
+}
+
+
+application {
+    mainClass.set("events.Application")
+}
+java {
+    sourceCompatibility = JavaVersion.toVersion("1.8")
+    targetCompatibility = JavaVersion.toVersion("1.8")
+}
+
+dockerBuild {
+    images = ["iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/$project.name:$project.version"]
+}
+
+dockerBuildNative {
+    images = ["iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/${project.name}-native:$project.version"]
+}
+
+
+
