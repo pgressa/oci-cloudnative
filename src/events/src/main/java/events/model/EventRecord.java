@@ -14,7 +14,7 @@ public class EventRecord extends Event {
     private final Instant time;
 
     public EventRecord(String source, String track, Event event) {
-        this(source, track,  event.getType(), event.getDetail());
+        this(source, track, Objects.requireNonNull(event, "Event cannot be null").getType(), event.getDetail());
     }
 
     @Creator

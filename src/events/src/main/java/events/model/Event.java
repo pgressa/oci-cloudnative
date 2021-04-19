@@ -2,7 +2,6 @@ package events.model;
 
 import io.micronaut.core.annotation.Introspected;
 
-import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
