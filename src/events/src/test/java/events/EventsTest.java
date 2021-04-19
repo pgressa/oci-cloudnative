@@ -17,6 +17,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import javax.inject.Inject;
@@ -29,18 +31,22 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Testcontainers
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventsTest implements TestPropertyProvider {
 
+    @Container
+    static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:latest"));
+
     @Inject
     EventsListener eventsListener;
+
     @Inject
     EventService eventService;
 
-    @Inject EventsClient client;
-
-    private KafkaContainer kafka;
+    @Inject
+    EventsClient client;
 
     @Test
     void testEventAndReceive() {
@@ -102,16 +108,9 @@ class EventsTest implements TestPropertyProvider {
         );
     }
 
-    @AfterAll
-    void shutdown() {
-        kafka.stop();
-    }
-
     @NonNull
     @Override
     public Map<String, String> getProperties() {
-        this.kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:latest"));
-        kafka.start();
         return Collections.singletonMap(
                 "kafka.bootstrap.servers", kafka.getBootstrapServers()
         );
