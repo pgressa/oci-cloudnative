@@ -1,0 +1,26 @@
+micronaut:
+  application:
+    name: mushop-events
+  server:
+    thread-selection: io
+  executors:
+    io:
+      n-threads: 75
+      type: fixed
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        descriptions: true
+        step: PT1M
+    enabled: true
+kafka:
+  bootstrap:
+    servers: localhost:9092
+tracing:
+  zipkin:
+    enabled: true
+    http:
+      url: http://localhost:9411
+    sampler:
+      probability: 0.1
