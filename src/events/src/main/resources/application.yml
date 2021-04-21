@@ -1,6 +1,6 @@
 micronaut:
   application:
-    name: mushop-events
+    name: events
   server:
     thread-selection: io
   executors:
@@ -21,13 +21,14 @@ micronaut:
       swagger:
         paths: classpath:META-INF/swagger
         mapping: /swagger/**
+
+endpoints:
+  health:
+    enabled: true
+    sensitive: false
+    details-visible: ANONYMOUS
+
 kafka:
   bootstrap:
     servers: localhost:9092
-tracing:
-  zipkin:
-    enabled: true
-    http:
-      url: http://localhost:9411
-    sampler:
-      probability: 0.1
+
