@@ -30,8 +30,6 @@ public interface MailConfiguration {
     /**
      * @return The SMTP port
      */
-    @Min(1000)
-    @Max(9999)
     @Bindable(defaultValue = "587")
     int getPort();
 
