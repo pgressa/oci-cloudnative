@@ -8,7 +8,6 @@ group = "microanut.mushop.newsletter.subscription"
 
 repositories {
     mavenCentral()
-    maven { url "https://dl.bintray.com/fnproject/fnproject" }
 }
 
 micronaut {
