@@ -1,10 +1,38 @@
 #
 # Identity
 #
+data "oci_identity_compartment" "mushop_compartment" {
+  #Required
+  id = var.compartment_ocid
+}
+
 resource "oci_identity_user" "fn_email_user" {
   name = "fn-${local.app_name_normalized}-newsletter-user-${random_string.deploy_id.result}"
   description = "${var.app_name} user created for email delivery"
   compartment_id = var.tenancy_ocid
+}
+
+resource "oci_identity_group" "fn_email_user_group" {
+  #Required
+  compartment_id = var.tenancy_ocid
+  description = "${var.app_name} email user group"
+  name = "fn-${local.app_name_normalized}${random_string.deploy_id.result}-user-group"
+}
+
+resource "oci_identity_user_group_membership" "fn_email_user_group_membership" {
+  #Required
+  group_id = oci_identity_group.fn_email_user_group.id
+  user_id = oci_identity_user.fn_email_user.id
+}
+
+resource "oci_identity_policy" "fn_email_user_group_policy" {
+  name = "fn-${local.app_name_normalized}-${random_string.deploy_id.result}-email-group-policy"
+  description = "policy created for ${var.app_name} email group"
+  compartment_id = var.compartment_ocid
+
+  statements = [
+    "Allow group ${oci_identity_group.fn_email_user_group.name} to use email-family in compartment id ${var.compartment_ocid}"
+  ]
 }
 
 resource "oci_identity_user_capabilities_management" "fn_email_user_capabilities_management" {
@@ -16,7 +44,12 @@ resource "oci_identity_user_capabilities_management" "fn_email_user_capabilities
   can_use_smtp_credentials = "true"
 }
 
-resource "oci_identity_dynamic_group" "function_dynamic_group" {
+resource "oci_email_sender" "fn_email_sender" {
+  compartment_id = var.compartment_ocid
+  email_address = var.newsletter_function_approved_email_address
+}
+
+resource "oci_identity_dynamic_group" "fn_dynamic_group" {
   compartment_id = var.tenancy_ocid
   name = "fn-newsletter-${local.app_name_normalized}-${random_string.deploy_id.result}-dynamic-group"
   description = " dynamic group created for ${var.app_name} newletter function"
@@ -30,25 +63,25 @@ resource "oci_identity_dynamic_group" "api_gw_dynamic_group" {
   matching_rule = "ALL {resource.type = 'ApiGateway', resource.compartment.id = '${var.compartment_ocid}'}"
 }
 
-resource "oci_identity_policy" "fn_dg_policy" {
-  name = "fn-newsletter-${local.app_name_normalized}-${random_string.deploy_id.result}-policy"
-  description = "policy created for ${var.app_name} newletter function"
-  compartment_id = var.compartment_ocid
-
-  statements = [
-    "Allow dynamic-group ${oci_identity_dynamic_group.function_dynamic_group.name} to use email-family in compartment id ${var.compartment_ocid}"
-  ]
-}
-
 resource "oci_identity_policy" "api_gw_dg_policy" {
   name = "api-gw-${local.app_name_normalized}-${random_string.deploy_id.result}-policy"
   description = "policy created for ${var.app_name} api gateway"
   compartment_id = var.compartment_ocid
 
   statements = [
-    "Allow dynamic-group ${oci_identity_dynamic_group.function_dynamic_group.name} to use virtual-network-family in compartment id ${var.compartment_ocid}",
-    "Allow dynamic-group ${oci_identity_dynamic_group.function_dynamic_group.name} to manage public-ips in compartment id ${var.compartment_ocid}",
-    "Allow dynamic-group ${oci_identity_dynamic_group.function_dynamic_group.name} to use functions-family in compartment id ${var.compartment_ocid}"
+    "ALLOW any-user to use functions-family in compartment ${data.oci_identity_compartment.mushop_compartment.name} where ALL {request.principal.type= 'ApiGateway', request.resource.compartment.id = '${var.compartment_ocid}'}"
+  ]
+}
+
+resource "oci_identity_policy" "fn_dg_policy" {
+  name = "fn-${local.app_name_normalized}-${random_string.deploy_id.result}-policy"
+  description = "policy created for ${var.app_name} function"
+  compartment_id = var.compartment_ocid
+
+  statements = [
+    "Allow dynamic-group ${oci_identity_dynamic_group.fn_dynamic_group.name} to use virtual-network-family in compartment id ${var.compartment_ocid}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.fn_dynamic_group.name} to manage public-ips in compartment id ${var.compartment_ocid}",
+    "Allow dynamic-group ${oci_identity_dynamic_group.fn_dynamic_group.name} to use functions-family in compartment id ${var.compartment_ocid}"
   ]
 }
 
@@ -73,14 +106,12 @@ resource "oci_core_virtual_network" "fn_vcn" {
 
 }
 
-
 resource "oci_core_nat_gateway" "fn_vcn_nat_gw" {
   block_traffic = "false"
   compartment_id = var.compartment_ocid
   display_name = "oke-nat-gateway-${local.app_name_normalized}-${random_string.deploy_id.result}"
   vcn_id = oci_core_virtual_network.fn_vcn.id
 }
-
 
 resource "oci_core_internet_gateway" "fn_vcn_ig" {
   compartment_id = var.compartment_ocid

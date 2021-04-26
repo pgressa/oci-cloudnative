@@ -15,7 +15,7 @@ variable "newsletter_function_docker_image_repository" {
   description = "Newsletter subscription function docker image repository."
 }
 variable "newsletter_function_docker_image_version" {
-  default = "1.0.0-SNAPSHOT"
+  default = "1.0.0"
   description = "Newsletter subscription function docker image version."
 }
 variable "newsletter_function_timeout" {
