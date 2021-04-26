@@ -1,6 +1,7 @@
 package api.services;
 
 import api.model.AddressInfo;
+import api.model.CardInfo;
 import api.model.MuUserDetails;
 import api.model.UserRegistrationRequest;
 import api.services.annotation.MuService;
@@ -73,7 +74,7 @@ public class UsersService {
     }
 
     @Post("/card")
-    Single<byte[]> addCard(Authentication authentication, @Body Single<ByteBuffer<?>> body) {
+    Single<CardInfo> addCard(Authentication authentication, @Body CardInfo body) {
         return client.addCard(resolveId(authentication), body);
     }
 
@@ -99,7 +100,7 @@ public class UsersService {
         Flowable<AddressInfo> getAddress(String customerId);
 
         @Post("/{customerId}/cards")
-        Single<byte[]> addCard(String customerId, @Body Single<ByteBuffer<?>> card);
+        Single<CardInfo> addCard(String customerId, @Body CardInfo card);
 
         @Get("/{customerId}/cards")
         Flowable<Map<String, Object>> getCard(String customerId);

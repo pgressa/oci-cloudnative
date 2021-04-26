@@ -1,6 +1,7 @@
 package api;
 
 import api.model.AddressInfo;
+import api.model.CardInfo;
 import api.model.UserRegistrationRequest;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
@@ -87,6 +88,26 @@ public class UsersServiceTest extends AbstractDatabaseServiceTest {
 
     }
 
+    @Order(5)
+    @Test
+    void testAddCard(UserApiClient client) {
+        final CardInfo original = new CardInfo("123", "1234123412341234", "0222");
+        CardInfo cardInfo = client.addCard(sessionID, original);
+        assertEquals(
+                original.getExpires(),
+                cardInfo.getExpires()
+        );
+
+        assertTrue(cardInfo.getLongNum().startsWith("xxxx"));
+
+        final CardInfo retrieved = client.getCard(sessionID);
+        assertEquals(
+                cardInfo.getExpires(),
+                retrieved.getExpires()
+        );
+        assertTrue(retrieved.getLongNum().startsWith("xxxx"));
+    }
+
     @Test
     @Order(10)
     void testLogout(UserApiClient client) {
@@ -96,6 +117,11 @@ public class UsersServiceTest extends AbstractDatabaseServiceTest {
                 HttpStatus.UNAUTHORIZED,
                 assertThrows(HttpClientResponseException.class, () -> client.getProfile(sessionID)).getStatus()
         );
+    }
+
+    @Override
+    protected String getServiceVersion() {
+        return "1.0.0-SNAPSHOT";
     }
 
     @Override
@@ -116,6 +142,12 @@ public class UsersServiceTest extends AbstractDatabaseServiceTest {
 
         @Get("/address")
         AddressInfo getAddress(@CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID);
+
+        @Post("/card")
+        CardInfo addCard(@CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID, @Body CardInfo addressInfo);
+
+        @Get("/card")
+        CardInfo getCard(@CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID);
 
         @Get("/logout")
         HttpResponse<?> logout(@CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID);

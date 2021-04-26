@@ -30,7 +30,7 @@ abstract class AbstractDatabaseServiceTest implements TestPropertyProvider {
                 .withNetworkAliases("oracledb");
         oracleContainer.start();
         serviceContainer = new GenericContainer<>(
-                DockerImageName.parse("iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/" + getServiceId() + ":1.0.0-SNAPSHOT")
+                DockerImageName.parse("iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/" + getServiceId() + ":" + getServiceVersion())
         ).withExposedPorts(8080)
                 .withNetwork(Network.SHARED)
                 .withEnv(Map.of(
@@ -43,6 +43,8 @@ abstract class AbstractDatabaseServiceTest implements TestPropertyProvider {
                 "micronaut.http.services." + getServiceId() + ".url", "http://localhost:" + serviceContainer.getFirstMappedPort()
         );
     }
+
+    protected abstract String getServiceVersion();
 
     protected abstract String getServiceId();
 }
