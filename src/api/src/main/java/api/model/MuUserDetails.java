@@ -1,4 +1,4 @@
-package api.auth;
+package api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.core.annotation.Introspected;

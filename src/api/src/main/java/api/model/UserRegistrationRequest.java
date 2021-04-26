@@ -1,4 +1,4 @@
-package api.dto;
+package api.model;
 
 import io.micronaut.core.annotation.Creator;
 import io.micronaut.core.annotation.Introspected;

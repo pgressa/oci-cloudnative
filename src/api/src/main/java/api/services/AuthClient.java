@@ -1,7 +1,7 @@
 package api.services;
 
-import api.auth.MuUserDetails;
-import api.dto.UserRegistrationRequest;
+import api.model.MuUserDetails;
+import api.model.UserRegistrationRequest;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;

@@ -1,7 +1,8 @@
 package api.services;
 
-import api.auth.MuUserDetails;
-import api.dto.UserRegistrationRequest;
+import api.model.AddressInfo;
+import api.model.MuUserDetails;
+import api.model.UserRegistrationRequest;
 import api.services.annotation.MuService;
 import io.micronaut.core.io.buffer.ByteBuffer;
 import io.micronaut.http.HttpRequest;
@@ -62,12 +63,12 @@ public class UsersService {
     }
 
     @Post("/address")
-    Single<byte[]> addAddress(Authentication authentication, @Body Single<ByteBuffer<?>> body) {
+    Single<AddressInfo> addAddress(Authentication authentication, @Body AddressInfo body) {
         return client.addAddress(resolveId(authentication), body);
     }
 
     @Get("/address")
-    Single<Map<String, Object>> addAddress(Authentication authentication) {
+    Single<AddressInfo> getAddress(Authentication authentication) {
         return client.getAddress(resolveId(authentication)).firstOrError();
     }
 
@@ -92,10 +93,10 @@ public class UsersService {
         Maybe<byte[]> getUser(String customerId);
 
         @Post("/{customerId}/addresses")
-        Single<byte[]> addAddress(String customerId, @Body Single<ByteBuffer<?>> address);
+        Single<AddressInfo> addAddress(String customerId, @Body AddressInfo address);
 
         @Get("/{customerId}/addresses")
-        Flowable<Map<String, Object>> getAddress(String customerId);
+        Flowable<AddressInfo> getAddress(String customerId);
 
         @Post("/{customerId}/cards")
         Single<byte[]> addCard(String customerId, @Body Single<ByteBuffer<?>> card);
