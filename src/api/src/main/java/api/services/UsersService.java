@@ -1,6 +1,6 @@
 package api.services;
 
-import api.dto.UserDTO;
+import api.auth.MuUserDetails;
 import api.dto.UserRegistrationRequest;
 import api.services.annotation.MuService;
 import io.micronaut.core.io.buffer.ByteBuffer;
@@ -38,7 +38,7 @@ public class UsersService {
 
     @Post("/register")
     @Secured(SecurityRule.IS_ANONYMOUS)
-    Single<UserDTO> register(HttpRequest<?> request, @Valid @Body UserRegistrationRequest registrationRequest) {
+    Single<MuUserDetails> register(HttpRequest<?> request, @Valid @Body UserRegistrationRequest registrationRequest) {
         return authClient.register(registrationRequest)
                 .map((userDTO -> {
                     sessionLoginHandler.loginSuccess(userDTO, request);
@@ -82,7 +82,7 @@ public class UsersService {
     }
 
     private String resolveId(Authentication auth) {
-        return Objects.requireNonNull(auth.getAttributes().get(UserDTO.ID), "User ID should never be null")
+        return Objects.requireNonNull(auth.getAttributes().get(MuUserDetails.ID), "User ID should never be null")
                 .toString();
     }
 

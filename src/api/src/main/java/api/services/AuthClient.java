@@ -1,6 +1,6 @@
 package api.services;
 
-import api.dto.UserDTO;
+import api.auth.MuUserDetails;
 import api.dto.UserRegistrationRequest;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Post;
@@ -10,8 +10,8 @@ import io.reactivex.Single;
 @Client(id = "user")
 public interface AuthClient {
     @Post("/login")
-    Single<UserDTO> login(String username, String password);
+    Single<MuUserDetails> login(String username, String password);
 
     @Post("/register")
-    Single<UserDTO> register(@Body UserRegistrationRequest registrationRequest);
+    Single<MuUserDetails> register(@Body UserRegistrationRequest registrationRequest);
 }
