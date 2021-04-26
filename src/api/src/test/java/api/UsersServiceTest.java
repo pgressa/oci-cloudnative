@@ -12,6 +12,8 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.cookie.Cookie;
 import io.micronaut.security.session.SessionLoginHandler;
+import io.micronaut.session.http.HttpSessionConfiguration;
+import io.micronaut.session.http.HttpSessionFilter;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -49,10 +51,18 @@ public class UsersServiceTest extends AbstractDatabaseServiceTest {
         assertTrue(loginResult.getHeaders().contains(HttpHeaders.AUTHORIZATION_INFO));
         assertTrue(loginResult.getHeaders().contains(HttpHeaders.SET_COOKIE));
 
-        final Cookie session = loginResult.getCookie("SESSION").get();
-        final Map<String, Object> profile = client.getProfile(session.getValue());
+        final Cookie session = loginResult.getCookie(HttpSessionConfiguration.DEFAULT_COOKIENAME).get();
+        final String sessionID = session.getValue();
+        final Map<String, Object> profile = client.getProfile(sessionID);
 
         assertNotNull(profile);
+
+        client.logout(sessionID);
+
+        assertEquals(
+                HttpStatus.UNAUTHORIZED,
+                assertThrows(HttpClientResponseException.class, () -> client.getProfile(sessionID)).getStatus()
+        );
     }
 
     @Override
@@ -63,10 +73,13 @@ public class UsersServiceTest extends AbstractDatabaseServiceTest {
     @Client("/api")
     interface UserApiClient {
         @Get("/profile")
-        Map<String, Object> getProfile(@CookieValue("SESSION") String sessionID);
+        Map<String, Object> getProfile(@CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID);
 
         @Post("/login")
         HttpResponse<?> login(String username, String password);
+
+        @Get("/logout")
+        HttpResponse<?> logout(@CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID);
 
         @Post("/register")
         Map<String, Object> register(@Body UserRegistrationRequest request);
