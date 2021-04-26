@@ -3,6 +3,7 @@ package user.api.dto;
 import io.micronaut.core.annotation.Introspected;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,8 +39,8 @@ public class UserDetailDto {
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
-        this.addresses = addresses;
-        this.cards = cards;
+        this.addresses = addresses != null ? addresses : Collections.emptyList();
+        this.cards = cards != null ? cards : Collections.emptyList();
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
