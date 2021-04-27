@@ -1,21 +1,24 @@
 package api.services;
 
 import api.services.annotation.MuService;
-import io.micronaut.core.io.buffer.ByteBuffer;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.session.Session;
+import io.micronaut.session.annotation.SessionValue;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @MuService
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class CartsService {
+    public static final String CART_ID = "cartId";
     private final CartsClient client;
 
     public CartsService(CartsClient client) {
@@ -23,50 +26,39 @@ public class CartsService {
     }
 
     @Get(value = "/cart", produces = MediaType.APPLICATION_JSON)
-    Maybe<ByteBuffer<?>> getCart(Session session) {
-        final UUID cartId = getCartId(session);
-        return client.getCartItems(cartId);
+    Single<List<?>> getCart(@SessionValue(CART_ID) UUID cartID) {
+        return client.getCartItems(cartID)
+                .onErrorReturnItem(Collections.emptyList());
     }
 
     @Delete(value = "/cart", produces = MediaType.APPLICATION_JSON)
-    Maybe<ByteBuffer<?>> deleteCart(Session session) {
-        final UUID cartId = getCartId(session);
-        return client.deleteCart(cartId);
+    Maybe<byte[]> deleteCart(@SessionValue(CART_ID) UUID cartID) {
+        return client.deleteCart(cartID);
     }
 
     @Delete(value = "/cart/{id}", produces = MediaType.APPLICATION_JSON)
-    Maybe<ByteBuffer<?>> deleteCartItem(Session session, String id) {
-        final UUID cartId = getCartId(session);
-        return client.deleteCartItem(cartId, id);
-    }
-
-
-    private UUID getCartId(Session session) {
-        return session.get("cartId", UUID.class).orElseGet(() -> {
-            final UUID uuid = UUID.randomUUID();
-            session.put("cartId", uuid);
-            return uuid;
-        });
+    Maybe<byte[]> deleteCartItem(@SessionValue(CART_ID) UUID cartID, String id) {
+        return client.deleteCartItem(cartID, id);
     }
 
     @Client(id = "carts", path = "/carts")
     interface CartsClient {
         @Get(uri = "/{cartId}", produces = MediaType.APPLICATION_JSON)
-        Maybe<ByteBuffer<?>> getCart(UUID cartId);
+        Maybe<byte[]> getCart(UUID cartId);
 
         @Get(uri = "/{cartId}/items", produces = MediaType.APPLICATION_JSON)
-        Maybe<ByteBuffer<?>> getCartItems(UUID cartId);
+        Single<List<?>> getCartItems(UUID cartId);
 
         @Delete(uri = "/{cartId}", produces = MediaType.APPLICATION_JSON)
-        Maybe<ByteBuffer<?>> deleteCart(UUID cartId);
+        Maybe<byte[]> deleteCart(UUID cartId);
 
         @Delete(uri = "/{cartId}/items/{itemId}", produces = MediaType.APPLICATION_JSON)
-        Maybe<ByteBuffer<?>> deleteCartItem(UUID cartId, String itemId);
+        Maybe<byte[]> deleteCartItem(UUID cartId, String itemId);
 
         @Post(uri = "/{cartId}", processes = MediaType.APPLICATION_JSON)
-        Maybe<ByteBuffer<?>> postCart(UUID cartId, @Body Single<ByteBuffer<?>> body);
+        Maybe<byte[]> postCart(UUID cartId, @Body byte[] body);
 
         @Put(uri = "/{cartId}/items", processes = MediaType.APPLICATION_JSON)
-        Maybe<ByteBuffer<?>> updateCartItem(UUID cartId, @Body Single<ByteBuffer<?>> body);
+        Maybe<byte[]> updateCartItem(UUID cartId, @Body byte[] body);
     }
 }

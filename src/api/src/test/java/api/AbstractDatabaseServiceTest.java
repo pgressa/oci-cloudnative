@@ -1,5 +1,11 @@
 package api;
 
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.CookieValue;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.client.annotation.Client;
+import io.micronaut.session.http.HttpSessionConfiguration;
 import io.micronaut.test.support.TestPropertyProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.testcontainers.containers.GenericContainer;
@@ -47,4 +53,10 @@ abstract class AbstractDatabaseServiceTest implements TestPropertyProvider {
     protected abstract String getServiceVersion();
 
     protected abstract String getServiceId();
+
+    @Client("/api")
+    interface LoginClient {
+        @Post("/login")
+        HttpResponse<?> login(String username, String password);
+    }
 }

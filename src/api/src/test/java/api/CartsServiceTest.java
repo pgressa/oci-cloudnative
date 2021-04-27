@@ -1,55 +1,77 @@
 package api;
 
+import api.model.MuUserDetails;
+import api.model.UserRegistrationRequest;
+import api.services.AuthClient;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.CookieValue;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.cookie.Cookie;
+import io.micronaut.session.http.HttpSessionConfiguration;
+import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.micronaut.test.support.TestPropertyProvider;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
+import io.reactivex.Single;
+import org.junit.jupiter.api.*;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Testcontainers
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CartsServiceTest implements TestPropertyProvider {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class CartsServiceTest extends AbstractDatabaseServiceTest {
 
-    @Container
-    static GenericContainer<?> cartsContainer = new GenericContainer<>(
-            DockerImageName.parse("iad.ocir.io/oracle/ateam/mushop-carts:1.2.0")
-    ).withExposedPorts(80);
+    private static String sessionID;
 
-    @Inject
-    CartClient client;
+    @BeforeAll
+    static void login(LoginClient client) {
+        final HttpResponse<?> response = client.login("test", "password");
+        final Cookie session = response.getCookie(HttpSessionConfiguration.DEFAULT_COOKIENAME).get();
+        sessionID = session.getValue();
+    }
+
 
     @Test
-    void testReadCart() {
-        final List<Map<String, Object>> cart = client.getCart();
-
+    void testReadCart(CartClient client) {
+        final List<Map<String, Object>> cart = client.getCart(sessionID);
         assertNotNull(cart);
     }
 
-    @Nonnull
     @Override
-    public Map<String, String> getProperties() {
-        return Collections.singletonMap(
-                "micronaut.http.services.carts.url", "http://localhost:" + cartsContainer.getFirstMappedPort()
-        );
+    protected String getServiceVersion() {
+        return "1.0.1-SNAPSHOT";
+    }
+
+    @Override
+    protected String getServiceId() {
+        return "carts";
     }
 
     @Client("/api/cart")
     interface CartClient {
         @Get
-        List<Map<String, Object>> getCart();
+        List<Map<String, Object>> getCart(@CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID);
+    }
+
+    @MockBean(AuthClient.class)
+    AuthClient authClient() {
+        return new AuthClient() {
+            @Override
+            public Single<MuUserDetails> login(String username, String password) {
+                return Single.just(new MuUserDetails(UUID.randomUUID().toString(), username));
+            }
+
+            @Override
+            public Single<MuUserDetails> register(UserRegistrationRequest registrationRequest) {
+                return Single.just(new MuUserDetails(UUID.randomUUID().toString(), registrationRequest.getUsername()));
+            }
+        };
     }
 }
