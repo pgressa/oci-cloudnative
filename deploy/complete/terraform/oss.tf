@@ -9,7 +9,6 @@ resource "oci_streaming_stream_pool" "stream_pool" {
   name = "${local.app_name_normalized}-${random_string.deploy_id.result}-stream-pool"
 
   kafka_settings {
-    auto_create_topics_enable = true
     log_retention_hours = 24
     num_partitions = 1
   }
@@ -21,7 +20,6 @@ resource "oci_streaming_stream" "events_stream" {
   partitions = 1
 
   #Optional
-  //  stream_pool_id = oci_streaming_stream_pool.stream_pool.id
   compartment_id = var.compartment_ocid
 }
 
@@ -60,8 +58,4 @@ resource "oci_identity_policy" "fn_email_user_group_policy" {
     "Allow group ${oci_identity_group.events_streaming_user_group.name} to manage stream-pull in compartment id ${var.compartment_ocid}",
     "Allow group ${oci_identity_group.events_streaming_user_group.name} to manage stream-push in compartment id ${var.compartment_ocid}"
   ]
-}
-
-output "kafkaSaslJaas" {
-  value = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"${data.oci_identity_tenancy.mushop_compartment.name}/${oci_identity_user.events_streaming_user.name}/${oci_streaming_stream_pool.stream_pool.id}\" password=\"${oci_identity_auth_token.events_streaming_user_auth_token.token}\";"
 }

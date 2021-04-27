@@ -46,11 +46,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 
 {{/* OSS Configurations */}}
 {{- define "events.env.stream" -}}
-# Stream connection
+{{- $ossConnection := .Values.ossConnectionSecret | default (.Values.global.ossConnectionSecret | default (printf "%s-oss-connection" .Chart.Name)) -}}
 - name: ORACLECLOUD_KAFKA_SASL_JAAS_CONFIG
-  value: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"cloudnative-devrel/events-stream-mushop-user-reVW/ocid1.streampool.oc1.iad.amaaaaaabnqp5kqagob4nekk754z57as7w2ligxg37lpj3ghrjayuhxaxznq\" password=\"c[HaEDuKgrF+FKXap8OB\";"
+  valueFrom:
+    secretKeyRef:
+      name: {{ $ossConnection }}
+      key: jaasConfig
 - name: ORACLECLOUD_KAFKA_BOOTSTRAP_SERVERS
-  value: "cell-1.streaming.us-ashburn-1.oci.oraclecloud.com:9092"
+  valueFrom:
+    secretKeyRef:
+      name: {{ $ossConnection }}
+      key: bootstrapServers
 {{- end -}}
 
 {{/* OAPM Connection url */}}

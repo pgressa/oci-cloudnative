@@ -33,6 +33,10 @@ resource "helm_release" "mushop" {
     name  = "global.oadbWalletSecret"
     value = var.db_wallet_name
   }
+  set {
+    name  = "global.ossConnectionSecret"
+    value = var.oss_conection
+  }
   # set {
   #   name  = "global.oosBucketSecret" # Commented until come with solution to gracefull removal of objects when terraform destroy
   #   value = var.oos_bucket_name
