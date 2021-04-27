@@ -46,56 +46,34 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 
 {{/* OSS Configurations */}}
 {{- define "events.env.stream" -}}
-{{- if ne .Values.global.mock.service "all" }}
-{{- $globalOsb := index (.Values.global | default .) "osb" -}}
-{{- $usesOsb := (index .Values.global "osb").oss  -}}
-{{- $bindingSecret := printf "%s-oss-binding" ($globalOsb.instanceName | default "mushop") -}}
-{{- $streamSecret := (and $usesOsb $bindingSecret) | default .Values.global.ossStreamSecret | default (printf "%s-oss-connection" .Release.Name) -}}
-{{- $credentialSecret := required "Value .ociAuthSecret is required!" (.Values.ociAuthSecret | default .Values.global.ociAuthSecret) -}}
-# API credentials
-- name: TENANCY
-  valueFrom:
-    secretKeyRef:
-      name: {{ $credentialSecret }}
-      key: tenancy
-- name: REGION
-  valueFrom:
-    secretKeyRef:
-      name: {{ $credentialSecret }}
-      key: region
-      optional: true
-- name: USER_ID
-  valueFrom:
-    secretKeyRef:
-      name: {{ $credentialSecret }}
-      key: user
-- name: PRIVATE_KEY
-  valueFrom:
-    secretKeyRef:
-      name: {{ $credentialSecret }}
-      key: privatekey
-- name: FINGERPRINT
-  valueFrom:
-    secretKeyRef:
-      name: {{ $credentialSecret }}
-      key: fingerprint
-- name: PASSPHRASE
-  valueFrom:
-    secretKeyRef:
-      name: {{ $credentialSecret }}
-      key: passphrase
-      optional: true
 # Stream connection
-- name: STREAM_ID
-  valueFrom:
-    secretKeyRef:
-      name: {{ $streamSecret }}
-      key: streamId
-- name: MESSAGES_ENDPOINT
-  valueFrom:
-    secretKeyRef:
-      name: {{ $streamSecret }}
-      key: messageEndpoint
-      optional: true
+- name: ORACLECLOUD_KAFKA_SASL_JAAS_CONFIG
+  value: "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"cloudnative-devrel/events-stream-mushop-user-reVW/ocid1.streampool.oc1.iad.amaaaaaabnqp5kqagob4nekk754z57as7w2ligxg37lpj3ghrjayuhxaxznq\" password=\"c[HaEDuKgrF+FKXap8OB\";"
+- name: ORACLECLOUD_KAFKA_BOOTSTRAP_SERVERS
+  value: "cell-1.streaming.us-ashburn-1.oci.oraclecloud.com:9092"
 {{- end -}}
+
+{{/* OAPM Connection url */}}
+{{- define "events.oapm.connection" -}}
+{{- $oapmConnection := .Values.oapmConnectionSecret | default (.Values.global.oapmConnectionSecret | default (printf "%s-oapm-connection" .Chart.Name)) -}}
+- name: ORACLECLOUD_TRACING_ZIPKIN_HTTP_URL
+  valueFrom:
+    secretKeyRef:
+      name: {{ $oapmConnection }}
+      key: zipkin_url
+- name: ORACLECLOUD_TRACING_ZIPKIN_HTTP_PATH
+  valueFrom:
+    secretKeyRef:
+      name: {{ $oapmConnection }}
+      key: zipkin_path
+{{- end -}}
+
+{{/* OIMS configuration */}}
+{{- define "events.oims.config" -}}
+{{- $ociDeployment := .Values.ociDeploymentConfigMap | default (.Values.global.ociDeploymentConfigMap | default (printf "%s-oci-deployment" .Chart.Name)) -}}
+- name: ORACLECLOUD_METRICS_COMPARTMENT_ID
+  valueFrom:
+    configMapKeyRef:
+      name: {{ $ociDeployment }}
+      key: compartment_id
 {{- end -}}

@@ -27,6 +27,8 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             {{- include "events.env.stream" . | nindent 12 }}
+            {{- include "events.oapm.connection" . | nindent 12 }}
+            {{- include "events.oims.config" . | nindent 12 }}
           ports:
             - containerPort: 8080
           livenessProbe:
