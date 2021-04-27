@@ -20,7 +20,7 @@ kafka:
   sasl:
     mechanism: PLAIN
     jaas:
-      config: ${ORACLECLOUD_KAFKA_SASL_JAAS_CONFIG}$
+      config: ${ORACLECLOUD_KAFKA_SASL_JAAS_CONFIG}
 
 tracing:
   zipkin:
