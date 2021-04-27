@@ -26,6 +26,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            - name: KAFKA_HEALTH_ENABLED
+              value: "false"
             {{- include "events.env.stream" . | nindent 12 }}
             {{- include "events.oapm.connection" . | nindent 12 }}
             {{- include "events.oims.config" . | nindent 12 }}
