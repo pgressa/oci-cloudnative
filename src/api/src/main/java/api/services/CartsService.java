@@ -3,6 +3,7 @@ package api.services;
 import api.model.MuUserDetails;
 import api.model.Product;
 import api.services.annotation.MuService;
+import api.services.annotation.TrackEvent;
 import api.services.support.CartId;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpStatus;
@@ -43,6 +44,7 @@ public class CartsService {
 
     @Delete(value = "/cart", produces = MediaType.APPLICATION_JSON)
     @Status(HttpStatus.NO_CONTENT)
+    @TrackEvent("delete:cart")
     Completable deleteCart(@CartId UUID cartID) {
         return client.deleteCart(cartID)
                     .onErrorComplete();
@@ -50,6 +52,7 @@ public class CartsService {
 
     @Status(HttpStatus.CREATED)
     @Post(value = "/cart")
+    @TrackEvent("cart:addItem")
     Completable addItem(
             Authentication authentication,
             @CartId UUID cartId,
@@ -98,6 +101,7 @@ public class CartsService {
 
     @Delete(value = "/cart/{id}", produces = MediaType.APPLICATION_JSON)
     @Status(HttpStatus.NO_CONTENT)
+    @TrackEvent("delete:cartItem")
     Completable deleteCartItem(@CartId UUID cartID, String id) {
         return client.deleteCartItem(cartID, id);
     }

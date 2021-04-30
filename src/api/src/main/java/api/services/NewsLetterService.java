@@ -1,6 +1,7 @@
 package api.services;
 
 import api.services.annotation.MuService;
+import api.services.annotation.TrackEvent;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Post;
@@ -25,6 +26,7 @@ public class NewsLetterService {
     }
 
     @Post("/newsletter")
+    @TrackEvent("subscribe:newsletter")
     Single<SubscribeResponse> subscribe(@Email @NotBlank String email) {
         return client.post(email)
                 .onErrorResumeNext((throwable -> {

@@ -10,6 +10,8 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.micronaut.security.rules.SecurityRule;
 
+import java.util.Map;
+
 @MuService
 @Client(id = ServiceLocator.CATALOGUE)
 @Secured(SecurityRule.IS_ANONYMOUS)
@@ -18,8 +20,8 @@ public interface CatalogueService {
     Flowable<HttpResponse<byte[]>> getImage(String path);
 
     @Get("/catalogue/{id}")
-    Single<HttpResponse<byte[]>> getItem(String id);
+    Single<HttpResponse<Map<String, Object>>> getItem(String id);
 
     @Get("/categories")
-    Single<HttpResponse<byte[]>> getCategories();
+    Single<HttpResponse<Map<String, Object>>> getCategories();
 }

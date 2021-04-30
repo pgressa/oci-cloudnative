@@ -2,6 +2,7 @@ package api.services;
 
 import api.model.MuUserDetails;
 import api.services.annotation.MuService;
+import api.services.annotation.TrackEvent;
 import api.services.support.CartId;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
@@ -44,13 +45,14 @@ public class OrdersService {
     }
 
     @Get("/orders/{orderId}")
-    Single<byte[]> getOrder(Long orderId) {
+    Single<Map<String, Object>> getOrder(Long orderId) {
         return client.getOrder(orderId);
     }
 
     @Post("/orders")
     @Status(HttpStatus.CREATED)
-    Single<byte[]> placeOrder(Authentication authentication, @CartId UUID cartId) {
+    @TrackEvent("create:order")
+    Single<Map<String, Object>> placeOrder(Authentication authentication, @CartId UUID cartId) {
         final String userId = MuUserDetails.resolveId(authentication);
         return usersClient.getProfile(userId)
                 .flatMap(userDetails -> serviceLocator.getUsersURL().flatMap(customerURI ->
@@ -75,10 +77,10 @@ public class OrdersService {
         Single<Map<String, Object>> getOrders(String custId, @Nullable String sort);
 
         @Get("/{orderId}")
-        Single<byte[]> getOrder(Long orderId);
+        Single<Map<String, Object>> getOrder(Long orderId);
 
         @Post("orders")
-        Single<byte[]> newOrder(@Body OrderRequest orderRequest);
+        Single<Map<String, Object>> newOrder(@Body OrderRequest orderRequest);
     }
 
     @Introspected

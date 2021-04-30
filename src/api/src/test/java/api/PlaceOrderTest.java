@@ -12,10 +12,7 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.CookieValue;
-import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.http.client.LoadBalancer;
-import io.micronaut.http.client.LoadBalancerResolver;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.cookie.Cookie;
 import io.micronaut.http.uri.UriTemplate;
@@ -36,16 +33,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import javax.annotation.Nonnull;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -160,14 +153,14 @@ public class PlaceOrderTest implements TestPropertyProvider {
             }
 
             @Override
-            public Single<byte[]> getOrder(Long orderId) {
-                return Single.just(new byte[0]);
+            public Single<Map<String, Object>> getOrder(Long orderId) {
+                return Single.just(Collections.emptyMap());
             }
 
             @Override
-            public Single<byte[]> newOrder(OrdersService.OrderRequest orderRequest) {
+            public Single<Map<String, Object>> newOrder(OrdersService.OrderRequest orderRequest) {
                 PlaceOrderTest.this.lastOrder = orderRequest;
-                return Single.just(new byte[0]);
+                return Single.just(Collections.emptyMap());
             }
         };
     }
