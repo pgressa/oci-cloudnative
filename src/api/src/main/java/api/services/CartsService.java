@@ -1,64 +1,117 @@
 package api.services;
 
+import api.model.MuUserDetails;
+import api.model.Product;
 import api.services.annotation.MuService;
+import api.services.support.CartId;
+import io.micronaut.core.annotation.Introspected;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.http.exceptions.HttpStatusException;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
-import io.micronaut.session.Session;
-import io.micronaut.session.annotation.SessionValue;
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import java.util.*;
 
 @MuService
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class CartsService {
-    public static final String CART_ID = "cartId";
     private final CartsClient client;
+    private final CatalogueClient catalogueClient;
 
-    public CartsService(CartsClient client) {
+    public CartsService(CartsClient client, CatalogueClient catalogueClient) {
         this.client = client;
+        this.catalogueClient = catalogueClient;
     }
 
     @Get(value = "/cart", produces = MediaType.APPLICATION_JSON)
-    Single<List<?>> getCart(@SessionValue(CART_ID) UUID cartID) {
+    Single<List<?>> getCart(@CartId UUID cartID) {
         return client.getCartItems(cartID)
                 .onErrorReturnItem(Collections.emptyList());
     }
 
     @Delete(value = "/cart", produces = MediaType.APPLICATION_JSON)
-    Maybe<byte[]> deleteCart(@SessionValue(CART_ID) UUID cartID) {
-        return client.deleteCart(cartID);
+    @Status(HttpStatus.NO_CONTENT)
+    Completable deleteCart(@CartId UUID cartID) {
+        return client.deleteCart(cartID)
+                    .onErrorComplete();
+    }
+
+    @Status(HttpStatus.CREATED)
+    @Post(value = "/cart")
+    Completable addItem(
+            Authentication authentication,
+            @CartId UUID cartId,
+            @Body AddItem addItem) {
+        return catalogueClient.getItem(addItem.id)
+            .switchIfEmpty(Single.error(() ->
+                new HttpStatusException(HttpStatus.NOT_FOUND, "Product not found for id " + addItem.id)
+            )).flatMapCompletable((product ->
+                    client.postCart(cartId, Map.of(
+                           "customerId", MuUserDetails.resolveId(authentication),
+                           "items", Collections.singletonList(Map.of(
+                                    "itemId", product.id,
+                                    "unitPrice", product.price,
+                                    "quantity", addItem.quantity
+                            ))
+                    )).flatMapCompletable(httpStatus -> {
+                        if (httpStatus.getCode() > 201) {
+                            return Completable.error(new HttpStatusException(httpStatus, "Unable to add to cart"));
+                        }
+                        return Completable.complete();
+                    })
+            ));
     }
 
     @Delete(value = "/cart/{id}", produces = MediaType.APPLICATION_JSON)
-    Maybe<byte[]> deleteCartItem(@SessionValue(CART_ID) UUID cartID, String id) {
+    @Status(HttpStatus.NO_CONTENT)
+    Completable deleteCartItem(@CartId UUID cartID, String id) {
         return client.deleteCartItem(cartID, id);
+    }
+
+    @Client(id = "catalogue", path = "/catalogue")
+    public interface CatalogueClient {
+        @Get("/{id}")
+        Maybe<Product> getItem(String id);
     }
 
     @Client(id = "carts", path = "/carts")
     interface CartsClient {
-        @Get(uri = "/{cartId}", produces = MediaType.APPLICATION_JSON)
-        Maybe<byte[]> getCart(UUID cartId);
-
         @Get(uri = "/{cartId}/items", produces = MediaType.APPLICATION_JSON)
         Single<List<?>> getCartItems(UUID cartId);
 
-        @Delete(uri = "/{cartId}", produces = MediaType.APPLICATION_JSON)
-        Maybe<byte[]> deleteCart(UUID cartId);
+        @Delete(uri = "/{cartId}")
+        Completable deleteCart(UUID cartId);
 
         @Delete(uri = "/{cartId}/items/{itemId}", produces = MediaType.APPLICATION_JSON)
-        Maybe<byte[]> deleteCartItem(UUID cartId, String itemId);
+        Completable deleteCartItem(UUID cartId, String itemId);
 
         @Post(uri = "/{cartId}", processes = MediaType.APPLICATION_JSON)
-        Maybe<byte[]> postCart(UUID cartId, @Body byte[] body);
+        Single<HttpStatus> postCart(UUID cartId, @Body Map<String, Object> body);
 
         @Put(uri = "/{cartId}/items", processes = MediaType.APPLICATION_JSON)
-        Maybe<byte[]> updateCartItem(UUID cartId, @Body byte[] body);
+        Single<HttpStatus> updateCartItem(UUID cartId, @Body Map<String, Object> body);
     }
+
+    @Introspected
+    static class AddItem {
+        @NotBlank
+        private final String id;
+        @Min(1)
+        private final int quantity;
+
+        AddItem(String id, int quantity) {
+            this.id = id;
+            this.quantity = quantity;
+        }
+    }
+
 }
