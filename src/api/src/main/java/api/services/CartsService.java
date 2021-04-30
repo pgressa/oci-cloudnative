@@ -24,6 +24,9 @@ import java.util.*;
 @MuService
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class CartsService {
+    private static final String ITEM_ID = "itemId";
+    private static final String UNIT_PRICE = "unitPrice";
+    private static final String QUANTITY = "quantity";
     private final CartsClient client;
     private final CatalogueClient catalogueClient;
 
@@ -50,7 +53,7 @@ public class CartsService {
     Completable addItem(
             Authentication authentication,
             @CartId UUID cartId,
-            @Body AddItem addItem) {
+            @Body ItemUpdate addItem) {
         return catalogueClient.getItem(addItem.id)
             .switchIfEmpty(Single.error(() ->
                 new HttpStatusException(HttpStatus.NOT_FOUND, "Product not found for id " + addItem.id)
@@ -58,9 +61,9 @@ public class CartsService {
                     client.postCart(cartId, Map.of(
                            "customerId", MuUserDetails.resolveId(authentication),
                            "items", Collections.singletonList(Map.of(
-                                    "itemId", product.id,
-                                    "unitPrice", product.price,
-                                    "quantity", addItem.quantity
+                                    ITEM_ID, product.id,
+                                    UNIT_PRICE, product.price,
+                                    QUANTITY, addItem.quantity
                             ))
                     )).flatMapCompletable(httpStatus -> {
                         if (httpStatus.getCode() > 201) {
@@ -69,6 +72,28 @@ public class CartsService {
                         return Completable.complete();
                     })
             ));
+    }
+
+    @Status(HttpStatus.OK)
+    @Post(value = "/cart/update")
+    Completable updateItem(
+            @CartId UUID cartId,
+            @Body ItemUpdate addItem) {
+        return catalogueClient.getItem(addItem.id)
+                .switchIfEmpty(Single.error(() ->
+                        new HttpStatusException(HttpStatus.NOT_FOUND, "Product not found for id " + addItem.id)
+                )).flatMapCompletable((product ->
+                        client.updateCartItem(cartId, Map.of(
+                                ITEM_ID, product.id,
+                                UNIT_PRICE, product.price,
+                                QUANTITY, addItem.quantity
+                        )).flatMapCompletable(httpStatus -> {
+                            if (httpStatus.getCode() > 201) {
+                                return Completable.error(new HttpStatusException(httpStatus, "Unable to update to cart"));
+                            }
+                            return Completable.complete();
+                        })
+                ));
     }
 
     @Delete(value = "/cart/{id}", produces = MediaType.APPLICATION_JSON)
@@ -102,13 +127,13 @@ public class CartsService {
     }
 
     @Introspected
-    static class AddItem {
+    static class ItemUpdate {
         @NotBlank
         private final String id;
         @Min(1)
         private final int quantity;
 
-        AddItem(String id, int quantity) {
+        ItemUpdate(String id, int quantity) {
             this.id = id;
             this.quantity = quantity;
         }

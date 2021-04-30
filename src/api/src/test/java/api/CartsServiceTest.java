@@ -5,6 +5,9 @@ import api.model.MuUserDetails;
 import api.model.UserRegistrationRequest;
 import api.services.AuthClient;
 import api.model.Product;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
@@ -57,7 +60,7 @@ public class CartsServiceTest implements TestPropertyProvider {
     @Test
     @Order(1)
     void testReadNonExistentCart(CartClient client) {
-        final List<Product> cart = client.getCart(sessionID);
+        final List<ProductAndQuantity> cart = client.getCart(sessionID);
         assertNotNull(cart);
     }
 
@@ -79,19 +82,38 @@ public class CartsServiceTest implements TestPropertyProvider {
 
         assertEquals(HttpStatus.CREATED, status);
 
-        final List<Product> cart = client.getCart(sessionID);
+        final List<ProductAndQuantity> cart = client.getCart(sessionID);
 
         assertEquals(1, cart.size());
 
-        final Product product = cart.iterator().next();
+        final ProductAndQuantity product = cart.iterator().next();
         assertEquals(10.00, product.price);
+        assertEquals(2, product.quantity);
 
     }
 
     @Test
     @Order(4)
+    void testUpdateItem(CartClient client) {
+        List<ProductAndQuantity> cart = client.getCart(sessionID);
+        assertEquals(1, cart.size());
+        client.updateItem(sessionID, Map.of(
+                "id", 1234,
+                "quantity", 3
+        ));
+
+        cart = client.getCart(sessionID);
+        assertEquals(1, cart.size());
+
+        final ProductAndQuantity product = cart.iterator().next();
+        assertEquals(10.00, product.price);
+        assertEquals(3, product.quantity);
+    }
+
+    @Test
+    @Order(5)
     void testDeleteItemFromCart(CartClient client) {
-        List<Product> cart = client.getCart(sessionID);
+        List<ProductAndQuantity> cart = client.getCart(sessionID);
         assertEquals(1, cart.size());
         final HttpStatus status = client.deleteCartItem(sessionID, "1234");
         assertEquals(HttpStatus.NO_CONTENT, status);
@@ -111,7 +133,7 @@ public class CartsServiceTest implements TestPropertyProvider {
     @Client("/api/cart")
     interface CartClient {
         @Get
-        List<Product> getCart(@CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID);
+        List<ProductAndQuantity> getCart(@CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID);
 
         @Delete
         HttpStatus deleteCart(@CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID);
@@ -124,6 +146,12 @@ public class CartsServiceTest implements TestPropertyProvider {
 
         @Post
         HttpStatus addItem(
+                @CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID,
+                @Body Map<String, Integer> item
+        );
+
+        @Post("/update")
+        HttpStatus updateItem(
                 @CookieValue(HttpSessionConfiguration.DEFAULT_COOKIENAME) String sessionID,
                 @Body Map<String, Integer> item
         );
@@ -147,5 +175,16 @@ public class CartsServiceTest implements TestPropertyProvider {
     @MockBean(api.services.CartsService.CatalogueClient.class)
     api.services.CartsService.CatalogueClient catalogueClient() {
         return id -> Maybe.just(new Product(id, 10.00));
+    }
+
+    @Introspected
+    static class ProductAndQuantity extends Product {
+        public final int quantity;
+
+        @JsonCreator
+        public ProductAndQuantity(@JsonProperty("id") String id, @JsonProperty("unitPrice") double price, @JsonProperty("quantity") int quantity) {
+            super(id, price);
+            this.quantity = quantity;
+        }
     }
 }
