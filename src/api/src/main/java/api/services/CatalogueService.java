@@ -11,7 +11,7 @@ import io.reactivex.Single;
 import io.micronaut.security.rules.SecurityRule;
 
 @MuService
-@Client(id = "catalogue")
+@Client(id = ServiceLocator.CATALOGUE)
 @Secured(SecurityRule.IS_ANONYMOUS)
 public interface CatalogueService {
     @Get(uri = "/catalogue/images/{+path}", processes = MediaType.IMAGE_PNG)

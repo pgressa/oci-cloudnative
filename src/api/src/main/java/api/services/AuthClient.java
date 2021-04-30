@@ -7,7 +7,7 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.client.annotation.Client;
 import io.reactivex.Single;
 
-@Client(id = "user")
+@Client(id = ServiceLocator.USER)
 public interface AuthClient {
     @Post("/login")
     Single<MuUserDetails> login(String username, String password);

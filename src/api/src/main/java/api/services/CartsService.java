@@ -102,13 +102,13 @@ public class CartsService {
         return client.deleteCartItem(cartID, id);
     }
 
-    @Client(id = "catalogue", path = "/catalogue")
+    @Client(id = ServiceLocator.CATALOGUE, path = "/catalogue")
     public interface CatalogueClient {
         @Get("/{id}")
         Maybe<Product> getItem(String id);
     }
 
-    @Client(id = "carts", path = "/carts")
+    @Client(id = ServiceLocator.CARTS, path = "/carts")
     interface CartsClient {
         @Get(uri = "/{cartId}/items", produces = MediaType.APPLICATION_JSON)
         Single<List<?>> getCartItems(UUID cartId);

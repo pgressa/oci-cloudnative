@@ -1,8 +1,6 @@
 package api;
 
 import api.AbstractDatabaseServiceTest.LoginClient;
-import api.model.MuUserDetails;
-import api.model.UserRegistrationRequest;
 import api.services.AuthClient;
 import api.model.Product;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -18,7 +16,6 @@ import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
 import io.reactivex.Maybe;
-import io.reactivex.Single;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -29,7 +26,6 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -159,17 +155,7 @@ public class CartsServiceTest implements TestPropertyProvider {
 
     @MockBean(AuthClient.class)
     AuthClient authClient() {
-        return new AuthClient() {
-            @Override
-            public Single<MuUserDetails> login(String username, String password) {
-                return Single.just(new MuUserDetails(UUID.randomUUID().toString(), username));
-            }
-
-            @Override
-            public Single<MuUserDetails> register(UserRegistrationRequest registrationRequest) {
-                return Single.just(new MuUserDetails(UUID.randomUUID().toString(), registrationRequest.getUsername()));
-            }
-        };
+        return new MockAuth();
     }
 
     @MockBean(api.services.CartsService.CatalogueClient.class)
@@ -187,4 +173,5 @@ public class CartsServiceTest implements TestPropertyProvider {
             this.quantity = quantity;
         }
     }
+
 }

@@ -10,18 +10,15 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
-import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.exceptions.HttpStatusException;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import io.micronaut.security.session.SessionLoginHandler;
-import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 import javax.validation.Valid;
-import java.util.Map;
 
 @MuService
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -68,7 +65,7 @@ public class UsersService {
 
     @Get("/address")
     Single<AddressInfo> getAddress(Authentication authentication) {
-        return client.getAddress(MuUserDetails.resolveId(authentication)).firstOrError();
+        return client.getAddresses(MuUserDetails.resolveId(authentication)).firstOrError();
     }
 
     @Post("/card")
@@ -77,26 +74,8 @@ public class UsersService {
     }
 
     @Get("/card")
-    Single<Map<String, Object>> getCard(Authentication authentication) {
-        return client.getCard(MuUserDetails.resolveId(authentication)).firstOrError();
-    }
-
-    @Client(id = "user", path = "/customers")
-    interface UsersClient {
-        @Get("/{customerId}")
-        Maybe<byte[]> getUser(String customerId);
-
-        @Post("/{customerId}/addresses")
-        Single<AddressInfo> addAddress(String customerId, @Body AddressInfo address);
-
-        @Get("/{customerId}/addresses")
-        Flowable<AddressInfo> getAddress(String customerId);
-
-        @Post("/{customerId}/cards")
-        Single<CardInfo> addCard(String customerId, @Body CardInfo card);
-
-        @Get("/{customerId}/cards")
-        Flowable<Map<String, Object>> getCard(String customerId);
+    Single<CardInfo> getCard(Authentication authentication) {
+        return client.getCards(MuUserDetails.resolveId(authentication)).firstOrError();
     }
 
 }

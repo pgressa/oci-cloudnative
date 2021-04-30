@@ -22,16 +22,15 @@ public class UserDetailDto {
 
     private final String phone;
 
-    private final List<UserAddressDetailDto> addresses;
 
-    private final List<UserCardDetailDto> cards;
 
     private final OffsetDateTime createdAt;
 
     private final OffsetDateTime updatedAt;
+    private List<UserAddressDetailDto> addresses;
+    private List<UserCardDetailDto> cards;
 
     public UserDetailDto(UUID id, String username, String firstName, String lastName, String email, String phone,
-                         List<UserAddressDetailDto> addresses, List<UserCardDetailDto> cards,
                          OffsetDateTime createdAt, OffsetDateTime updatedAt) {
         this.id = id;
         this.username = username;
@@ -39,10 +38,17 @@ public class UserDetailDto {
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
-        this.addresses = addresses != null ? addresses : Collections.emptyList();
-        this.cards = cards != null ? cards : Collections.emptyList();
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public void setAddresses(List<UserAddressDetailDto> addresses) {
+        this.addresses = addresses != null ? addresses : Collections.emptyList();
+
+    }
+
+    public void setCards(List<UserCardDetailDto> cards) {
+        this.cards = cards != null ? cards : Collections.emptyList();
     }
 
     public UUID getId() {

@@ -1,12 +1,16 @@
 package api.model;
 
+import io.micronaut.core.annotation.Creator;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
 
 @Introspected
 public class AddressInfo {
+    @Nullable
+    private final String id;
     @NotEmpty
     private final String number;
 
@@ -22,12 +26,23 @@ public class AddressInfo {
     @NotEmpty
     private final String postcode;
 
-    public AddressInfo(String number, String street, String city, String country, String postcode) {
+    @Creator
+    public AddressInfo(@Nullable String id, String number, String street, String city, String country, String postcode) {
+        this.id = id;
         this.number = number;
         this.street = street;
         this.city = city;
         this.country = country;
         this.postcode = postcode;
+    }
+
+    public AddressInfo(String number, String street, String city, String country, String postcode) {
+        this(null, number, street, city, country, postcode);
+    }
+
+    @Nullable
+    public String getId() {
+        return id;
     }
 
     public String getNumber() {

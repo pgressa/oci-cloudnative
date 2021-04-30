@@ -10,7 +10,7 @@ import io.micronaut.security.rules.SecurityRule;
 import io.reactivex.Flowable;
 
 @MuService
-@Client(id = "events")
+@Client(id = ServiceLocator.EVENTS)
 @Secured(SecurityRule.IS_ANONYMOUS)
 public interface EventsService {
     @Post("/events")

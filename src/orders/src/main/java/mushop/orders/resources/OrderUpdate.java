@@ -2,16 +2,15 @@
  ** Copyright © 2020, Oracle and/or its affiliates. All rights reserved.
  ** Licensed under the Universal Permissive License v 1.0 as shown at http://oss.oracle.com/licenses/upl.
  **/
-package  mushop.orders.values;
+package mushop.orders.resources;
 
+import io.micronaut.core.annotation.Introspected;
 import mushop.orders.entities.Shipment;
 
+@Introspected
 public class OrderUpdate {
-    private Long orderId;
-    private mushop.orders.entities.Shipment Shipment;
-
-    public OrderUpdate() {
-    }
+    private final Long orderId;
+    private final mushop.orders.entities.Shipment Shipment;
 
     public OrderUpdate(Long orderId, Shipment shipment) {
         this.orderId = orderId;
@@ -22,16 +21,8 @@ public class OrderUpdate {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
     public Shipment getShipment() {
         return Shipment;
-    }
-
-    public void setShipment(Shipment shipment) {
-        Shipment = shipment;
     }
 
     @Override
