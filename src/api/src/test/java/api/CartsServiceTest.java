@@ -93,13 +93,11 @@ public class CartsServiceTest implements TestPropertyProvider {
     void testDeleteItemFromCart(CartClient client) {
         List<Product> cart = client.getCart(sessionID);
         assertEquals(1, cart.size());
-        final Product product = cart.iterator().next();
-
-        final HttpStatus status = client.deleteCartItem(sessionID, product.id);
+        final HttpStatus status = client.deleteCartItem(sessionID, "1234");
         assertEquals(HttpStatus.NO_CONTENT, status);
 
         cart = client.getCart(sessionID);
-        assertEquals(10, cart.size());
+        assertEquals(0, cart.size());
     }
 
     @Nonnull
