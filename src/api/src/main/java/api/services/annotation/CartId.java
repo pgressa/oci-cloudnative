@@ -1,4 +1,4 @@
-package api.services.support;
+package api.services.annotation;
 
 import io.micronaut.core.bind.annotation.Bindable;
 
