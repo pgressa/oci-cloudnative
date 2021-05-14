@@ -190,7 +190,7 @@ services:
 
   # Payment service
   payment:
-    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/payment:1.0.0-SNAPSHOT
+    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/payment-native:1.0.0-SNAPSHOT
     restart: always
     cap_drop:
       - all
