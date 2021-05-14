@@ -1,4 +1,4 @@
-replicaCount: 1
+replicaCount: 2
 
 image:
   repository: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/events
