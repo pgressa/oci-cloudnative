@@ -90,7 +90,7 @@ services:
 
   # OCI Catalog service
   catalogue:
-    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/catalogue:1.0.0-SNAPSHOT
+    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/catalogue-native:1.0.0-SNAPSHOT
     restart: always
     depends_on:
       - oracledbcatalogue
