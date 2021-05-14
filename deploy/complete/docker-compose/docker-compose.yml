@@ -205,7 +205,7 @@ services:
 
   # Fulfillment service
   fulfillment:
-    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/fulfillment:1.0.0-SNAPSHOT
+    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/fulfillment-native:1.0.0-SNAPSHOT
     restart: always
     read_only: true
     tmpfs:
