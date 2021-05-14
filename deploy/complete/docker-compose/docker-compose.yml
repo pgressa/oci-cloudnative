@@ -168,7 +168,7 @@ services:
 
   # User service
   user:
-    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/user:1.0.0-SNAPSHOT
+    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/user-native:1.0.0-SNAPSHOT
     restart: always
     cap_drop:
       - all
