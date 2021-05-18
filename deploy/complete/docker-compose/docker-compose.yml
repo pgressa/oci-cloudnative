@@ -137,7 +137,7 @@ services:
 
   # OCI Orders service
   orders:
-    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/orders:1.0.0-SNAPSHOT
+    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/orders-native:1.0.0-SNAPSHOT
     restart: always
     cap_drop:
       - all
