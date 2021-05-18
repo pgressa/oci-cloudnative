@@ -50,3 +50,24 @@ jobs:
           ./gradlew check --no-daemon --parallel --continue
         env:
           TESTCONTAINERS_RYUK_DISABLED: true
+      - name: Build with Gradle - NativeImage
+        working-directory: src/${{ matrix.project-path }}
+        run: |
+          ./gradlew testNativeImage --no-daemon --parallel --continue
+        env:
+          TESTCONTAINERS_RYUK_DISABLED: true
+      - name: Login to OCIR
+        uses: docker/login-action@v1
+        with:
+          registry: iad.ocir.io
+          username: ${{ secrets.OCI_USERNAME }}
+          password: ${{ secrets.OCI_TOKEN }}
+      - name: Push docker image - GraalVM
+        if: success() && github.event_name == 'push'
+        run: ./gradlew dockerPush --no-daemon
+      - name: Push docker image - OpenJdk
+        if: success() && github.event_name == 'push'
+        run: ./gradlew dockerPush -PjavaBaseImage=openjdk --no-daemon
+      - name: Push docker image - GraalVM Native Image
+        if: success() && github.event_name == 'push'
+        run: ./gradlew dockerPushNative --no-daemon
