@@ -18,7 +18,7 @@ services:
 
   # Storefront application middleware
   api:
-    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/api:1.0.0-SNAPSHOT
+    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/api-native:1.0.0-SNAPSHOT
     hostname: api
     restart: always
     cap_drop:
@@ -112,7 +112,7 @@ services:
 
   # OCI Carts service
   carts:
-    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/carts:1.0.3-SNAPSHOT
+    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/carts-native:1.0.3-SNAPSHOT
     restart: always
     depends_on:
       - oracledbcarts
