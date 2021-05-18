@@ -64,10 +64,13 @@ jobs:
           password: ${{ secrets.OCI_TOKEN }}
       - name: Push docker image - GraalVM
 #        if: success() && github.event_name == 'push'
+        working-directory: src/${{ matrix.project-path }}
         run: ./gradlew dockerPush --no-daemon
       - name: Push docker image - OpenJdk
 #        if: success() && github.event_name == 'push'
+        working-directory: src/${{ matrix.project-path }}
         run: ./gradlew dockerPush -PjavaBaseImage=openjdk --no-daemon
       - name: Push docker image - GraalVM Native Image
 #        if: success() && github.event_name == 'push'
+        working-directory: src/${{ matrix.project-path }}
         run: ./gradlew dockerPushNative --no-daemon
