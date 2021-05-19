@@ -215,6 +215,7 @@
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
+                <version>3.0.0</version>
                 <configuration>
                     <from>
                         <image>${docker.image.from}</image>

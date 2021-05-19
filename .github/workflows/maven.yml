@@ -52,12 +52,12 @@ jobs:
       - name: Push docker image - GraalVM
 #        if: success() && github.event_name == 'push'
         working-directory: src/${{ matrix.project-path }}
-        run: ./mvnw package -Dpackaging=docker
+        run: ./mvnw package -Dpackaging=docker --no-transfer-progress
       - name: Push docker image - OpenJdk
 #        if: success() && github.event_name == 'push'
         working-directory: src/${{ matrix.project-path }}
-        run: ./mvnw package -Dpackaging=docker -Ddocker.image.suffix=openjdk -Ddocker.image.from=openjdk:16-alpine
+        run: ./mvnw package -Dpackaging=docker -Ddocker.image.suffix=openjdk -Ddocker.image.from=openjdk:16-alpine --no-transfer-progress
       - name: Push docker image - GraalVM Native Image
 #        if: success() && github.event_name == 'push'
         working-directory: src/${{ matrix.project-path }}
-        run: ./mvnw package -Dpackaging=docker-native
+        run: ./mvnw package -Dpackaging=docker-native --no-transfer-progress
