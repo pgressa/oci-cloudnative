@@ -33,7 +33,11 @@
         <jdbc.version>21.1.0.0</jdbc.version>
         <soda.version>1.1.4</soda.version>
         <docker.image.suffix>graalvm</docker.image.suffix>
-        <docker.image.from>ghcr.io/graalvm/graalvm-ce:ol8-java11-21.1.0</docker.image.from>
+    <!--
+    GraalVM docker images are published on ghcr.io but that doesn't work with jib
+    https://github.com/GoogleContainerTools/jib/issues/3250
+    -->
+        <docker.image.from>pgressa/graalvm-ce:ol8-java11-21.1.0</docker.image.from>
 <!--        <libs.classpath.prefix>libs</libs.classpath.prefix>-->
 <!--        <copied.libs.dir>${project.build.directory}/${libs.classpath.prefix}</copied.libs.dir>-->
 <!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
