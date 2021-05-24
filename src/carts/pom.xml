@@ -32,12 +32,7 @@
         <micronaut.testcontainers.version>1.15.3</micronaut.testcontainers.version>
         <jdbc.version>21.1.0.0</jdbc.version>
         <soda.version>1.1.4</soda.version>
-        <docker.image.suffix>graalvm</docker.image.suffix>
-    <!--
-    GraalVM docker images are published on ghcr.io but that doesn't work with jib
-    https://github.com/GoogleContainerTools/jib/issues/3250
-    -->
-        <docker.image.from>pgressa/graalvm-ce:ol8-java11-21.1.0</docker.image.from>
+        <docker.image.suffix>openjdk</docker.image.suffix>
 <!--        <libs.classpath.prefix>libs</libs.classpath.prefix>-->
 <!--        <copied.libs.dir>${project.build.directory}/${libs.classpath.prefix}</copied.libs.dir>-->
 <!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
@@ -221,9 +216,6 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <from>
-                        <image>${docker.image.from}</image>
-                    </from>
                     <to>
                         <image>iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/${project.artifactId}-${docker.image.suffix}:${project.version}</image>
                     </to>
