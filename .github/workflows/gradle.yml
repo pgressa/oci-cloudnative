@@ -13,6 +13,7 @@ jobs:
     env:
       JAVA: '11'
     strategy:
+      fail-fast: false
       matrix:
         project-path: [
             'api',
@@ -24,6 +25,10 @@ jobs:
             'payment',
             'user'
         ]
+        allow-native-image-failure: [false]
+        include:
+          - project-path: events
+            allow-native-image-failure: true
     steps:
       # https://github.com/actions/virtual-environments/issues/709
       - name: Free disk space
@@ -74,3 +79,4 @@ jobs:
 #        if: success() && github.event_name == 'push'
         working-directory: src/${{ matrix.project-path }}
         run: ./gradlew dockerPushNative --no-daemon
+        continue-on-error: ${{ matrix.allow-native-image-failure }}
