@@ -60,4 +60,4 @@ jobs:
       - name: Push docker image - GraalVM Native Image
 #        if: success() && github.event_name == 'push'
         working-directory: src/${{ matrix.project-path }}
-        run: ./mvnw package -Dpackaging=docker-native --no-transfer-progress
+        run: ./mvnw package -Dpackaging=docker-native --no-transfer-progress -Pgraalvm
