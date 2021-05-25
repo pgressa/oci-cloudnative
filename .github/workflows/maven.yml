@@ -44,6 +44,7 @@ jobs:
         env:
           TESTCONTAINERS_RYUK_DISABLED: true
   push-docker-images:
+#    if: success() && github.event_name == 'push'
     needs: build
     runs-on: self-hosted
     strategy:
@@ -70,15 +71,13 @@ jobs:
           registry: iad.ocir.io
           username: ${{ secrets.OCI_USERNAME }}
           password: ${{ secrets.OCI_TOKEN }}
+          logout: false
       - name: Push docker image - GraalVM
-        #        if: success() && github.event_name == 'push'
         working-directory: src/${{ matrix.project-path }}
         run: ./mvnw deploy -Dpackaging=docker -Djib.from.image=ghcr.io/graalvm/graalvm-ce:java11-21.1.0 -Ddocker.image.suffix=graalvm --no-transfer-progress
       - name: Push docker image - OpenJdk
-        #        if: success() && github.event_name == 'push'
         working-directory: src/${{ matrix.project-path }}
         run: ./mvnw deploy -Dpackaging=docker --no-transfer-progress
       - name: Push docker image - GraalVM Native Image
-        #        if: success() && github.event_name == 'push'
         working-directory: src/${{ matrix.project-path }}
         run: ./mvnw deploy -Dpackaging=docker-native --no-transfer-progress -Pgraalvm
