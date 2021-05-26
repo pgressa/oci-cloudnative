@@ -27,6 +27,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -105,8 +107,8 @@ public class CartsService {
                     client.postCart(cartId, Map.of(
                            "customerId", authentication == null ? "" : MuUserDetails.resolveId(authentication),
                            "items", Collections.singletonList(Map.of(
-                                    ITEM_ID, product.id,
-                                    UNIT_PRICE, product.price,
+                                    ITEM_ID, product.getId(),
+                                    UNIT_PRICE, product.getUnitPrice(),
                                     QUANTITY, addItem.quantity
                             ))
                     )).flatMapCompletable(httpStatus -> {
@@ -136,8 +138,8 @@ public class CartsService {
                         new HttpStatusException(HttpStatus.NOT_FOUND, "Product not found for id " + addItem.id)
                 )).flatMapCompletable((product ->
                         client.updateCartItem(cartId, Map.of(
-                                ITEM_ID, product.id,
-                                UNIT_PRICE, product.price,
+                                ITEM_ID, product.getId(),
+                                UNIT_PRICE, product.getUnitPrice(),
                                 QUANTITY, addItem.quantity
                         )).flatMapCompletable(httpStatus -> {
                             if (httpStatus.getCode() > 201) {
