@@ -15,7 +15,7 @@
       {"pattern":"\\Qoracle/sql/converter_xcharset/lx2001f.glb\\E"},
       {"pattern":"\\Qoracle/sql/converter_xcharset/lx2002e.glb\\E"},
       {"pattern":"\\Qoracle/sql/converter_xcharset/lx200b2.glb\\E"},
-      {"pattern":"\\Qorg/glassfish/jersey/internal/build.properties\\E"},
+      {"pattern":"\\Qorg/glassfish/jersey/internal/build.properties\\E"}
     ]},
   "bundles":[
     {"name":"oracle.jdbc.driver.Messages"},
