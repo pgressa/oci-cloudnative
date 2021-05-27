@@ -1,0 +1,26 @@
+{
+  "resources":{
+    "includes":[
+      {"pattern":"\\QMETA-INF/services/com.fasterxml.jackson.databind.Module\\E"},
+      {"pattern":"\\QMETA-INF/services/java.nio.file.spi.FileSystemProvider\\E"},
+      {"pattern":"\\QMETA-INF/services/java.sql.Driver\\E"},
+      {"pattern":"\\QMETA-INF/services/org.glassfish.hk2.extension.ServiceLocatorGenerator\\E"},
+      {"pattern":"\\QMETA-INF/services/org.glassfish.jersey.internal.inject.InjectionManagerFactory\\E"},
+      {"pattern":"\\QMETA-INF/services/org.glassfish.jersey.internal.spi.AutoDiscoverable\\E"},
+      {"pattern":"\\Qcom/oracle/bmc/sdk.properties\\E"},
+      {"pattern":"\\Qoracle/jdbc/defaultConnectionProperties.properties\\E"},
+      {"pattern":"\\Qoracle/jdbc/driver/errorMap.xml\\E"},
+      {"pattern":"\\Qoracle/sql/converter_xcharset/lx20001.glb\\E"},
+      {"pattern":"\\Qoracle/sql/converter_xcharset/lx20002.glb\\E"},
+      {"pattern":"\\Qoracle/sql/converter_xcharset/lx2001f.glb\\E"},
+      {"pattern":"\\Qoracle/sql/converter_xcharset/lx2002e.glb\\E"},
+      {"pattern":"\\Qoracle/sql/converter_xcharset/lx200b2.glb\\E"},
+      {"pattern":"\\Qorg/glassfish/jersey/internal/build.properties\\E"},
+    ]},
+  "bundles":[
+    {"name":"oracle.jdbc.driver.Messages"},
+    {"name":"oracle.security.pki.resources.OraclePKIMsg"},
+    {"name":"oracle.ucp.util.UCPMessages"},
+    {"name":"oracle.json.common.Message"}
+  ]
+}
