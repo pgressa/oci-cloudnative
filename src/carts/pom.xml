@@ -223,6 +223,7 @@
                 <configuration>
                     <buildArgs combine.children="append">
                         <buildArg>--verbose</buildArg>
+                        <buildArg>--debug</buildArg>
                     </buildArgs>
                 </configuration>
             </plugin>
