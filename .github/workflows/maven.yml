@@ -53,7 +53,6 @@ jobs:
             'carts'
         ]
     steps:
-      - uses: AutoModality/action-clean@1.1.0
       - uses: actions/checkout@v2
       - uses: actions/cache@v2.1.4
         with:
