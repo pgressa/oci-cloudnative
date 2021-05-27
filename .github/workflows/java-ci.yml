@@ -1,5 +1,4 @@
-# and edit them there. Note that it will be sync'ed to all the Micronaut repos
-name: Java CI - Gradle
+name: Java CI
 on:
   push:
     branches:
@@ -17,6 +16,7 @@ jobs:
       matrix:
         project-path: [
             'api',
+            'carts',
             'catalogue',
             'events',
             'fulfillment',
@@ -26,13 +26,6 @@ jobs:
             'user'
         ]
     steps:
-      # https://github.com/actions/virtual-environments/issues/709
-      - name: Free disk space
-        run: |
-          sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-          sudo apt-get clean
-          df -h
       - uses: actions/checkout@v2
       - uses: actions/cache@v2.1.4
         with:
@@ -46,9 +39,17 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ env.JAVA }}
       - name: Build with Gradle
+        if: hashFiles('src/${{ matrix.project-path }}/gradlew') != ''
         working-directory: src/${{ matrix.project-path }}
         run: |
           ./gradlew check --no-daemon  --continue
+        env:
+          TESTCONTAINERS_RYUK_DISABLED: true
+      - name: Build with Maven
+        if: hashFiles('src/${{ matrix.project-path }}/mvnw') != ''
+        working-directory: src/${{ matrix.project-path }}
+        run: |
+          ./mvnw test --no-transfer-progress
         env:
           TESTCONTAINERS_RYUK_DISABLED: true
   push-docker-images:
@@ -60,6 +61,7 @@ jobs:
       matrix:
         project-path: [
             'api',
+            'carts',
             'catalogue',
             'events',
             'fulfillment',
@@ -88,12 +90,27 @@ jobs:
           username: ${{ secrets.OCI_USERNAME }}
           password: ${{ secrets.OCI_TOKEN }}
           logout: false
-      - name: Push docker image - GraalVM
+      - name: Gradle - push docker image GraalVM
+        if: hashFiles('src/${{ matrix.project-path }}/gradlew') != ''
         working-directory: src/${{ matrix.project-path }}
         run: ./gradlew dockerPush --no-daemon
-      - name: Push docker image - OpenJdk
+      - name: Gradle - push docker image OpenJdk
+        if: hashFiles('src/${{ matrix.project-path }}/gradlew') != ''
         working-directory: src/${{ matrix.project-path }}
         run: ./gradlew dockerPush -PjavaBaseImage=openjdk --no-daemon
-      - name: Push docker image - GraalVM Native Image
+      - name: Gradle - push docker image GraalVM Native Image
+        if: hashFiles('src/${{ matrix.project-path }}/gradlew') != ''
         working-directory: src/${{ matrix.project-path }}
         run: ./gradlew dockerPushNative --no-daemon
+      - name: Maven - push docker image GraalVM
+        if: hashFiles('src/${{ matrix.project-path }}/mvnw') != ''
+        working-directory: src/${{ matrix.project-path }}
+        run: ./mvnw deploy -Dpackaging=docker -Djib.from.image=ghcr.io/graalvm/graalvm-ce:java11-21.1.0 -Ddocker.image.suffix=graalvm --no-transfer-progress
+      - name: Maven - push docker image OpenJdk
+        if: hashFiles('src/${{ matrix.project-path }}/mvnw') != ''
+        working-directory: src/${{ matrix.project-path }}
+        run: ./mvnw deploy -Dpackaging=docker --no-transfer-progress
+      - name: Maven - push docker image GraalVM Native Image
+        if: hashFiles('src/${{ matrix.project-path }}/mvnw') != ''
+        working-directory: src/${{ matrix.project-path }}
+        run: ./mvnw deploy -Dpackaging=docker-native -Ddocker.image.suffix=native --no-transfer-progress -Pgraalvm
