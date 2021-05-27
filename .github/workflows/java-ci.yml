@@ -38,16 +38,16 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: ${{ env.JAVA }}
-      - name: Build and test
-        working-directory: src/${{ matrix.project-path }}
-        run: |
-          if [ -f "mvnw" ]; then
-              ./mvnw test --no-transfer-progress
-          elif [ -f "gradlew" ]; then
-              ./gradlew check --no-daemon --parallel --continue
-          fi
-        env:
-          TESTCONTAINERS_RYUK_DISABLED: true
+#      - name: Build and test
+#        working-directory: src/${{ matrix.project-path }}
+#        run: |
+#          if [ -f "mvnw" ]; then
+#              ./mvnw test --no-transfer-progress
+#          elif [ -f "gradlew" ]; then
+#              ./gradlew check --no-daemon --parallel --continue
+#          fi
+#        env:
+#          TESTCONTAINERS_RYUK_DISABLED: true
   build-docker-images:
     if: success()
     needs: build
@@ -86,33 +86,33 @@ jobs:
           username: ${{ secrets.OCI_USERNAME }}
           password: ${{ secrets.OCI_TOKEN }}
           logout: false
-
-      - name: Build docker image - GraalVM
-        working-directory: src/${{ matrix.project-path }}
-        run: |
-          if [ -f "mvnw" ]; then
-            ./mvnw package -Dpackaging=docker -Djib.from.image=ghcr.io/graalvm/graalvm-ce:java11-21.1.0 -Ddocker.image.suffix=graalvm --no-transfer-progress
-          elif [ -f "gradlew" ]; then
-            ./gradlew dockerBuild --no-daemon
-          fi
-
-      - name: Build - docker image OpenJdk
-        working-directory: src/${{ matrix.project-path }}
-        run: |
-          if [ -f "mvnw" ]; then
-            ./mvnw package -Dpackaging=docker --no-transfer-progress
-          elif [ -f "gradlew" ]; then
-            ./gradlew dockerPush -PjavaBaseImage=openjdk --no-daemon
-          fi
-
-      - name: Build - docker image GraalVM Native Image
-        working-directory: src/${{ matrix.project-path }}
-        run: |
-          if [ -f "mvnw" ]; then
-            ./mvnw package -Dpackaging=docker-native -Ddocker.image.suffix=native --no-transfer-progress -Pgraalvm
-          elif [ -f "gradlew" ]; then
-            ./gradlew dockerBuildNative --no-daemon
-          fi
+#
+#      - name: Build docker image - GraalVM
+#        working-directory: src/${{ matrix.project-path }}
+#        run: |
+#          if [ -f "mvnw" ]; then
+#            ./mvnw package -Dpackaging=docker -Djib.from.image=ghcr.io/graalvm/graalvm-ce:java11-21.1.0 -Ddocker.image.suffix=graalvm --no-transfer-progress
+#          elif [ -f "gradlew" ]; then
+#            ./gradlew dockerBuild --no-daemon
+#          fi
+#
+#      - name: Build - docker image OpenJdk
+#        working-directory: src/${{ matrix.project-path }}
+#        run: |
+#          if [ -f "mvnw" ]; then
+#            ./mvnw package -Dpackaging=docker --no-transfer-progress
+#          elif [ -f "gradlew" ]; then
+#            ./gradlew dockerPush -PjavaBaseImage=openjdk --no-daemon
+#          fi
+#
+#      - name: Build - docker image GraalVM Native Image
+#        working-directory: src/${{ matrix.project-path }}
+#        run: |
+#          if [ -f "mvnw" ]; then
+#            ./mvnw package -Dpackaging=docker-native -Ddocker.image.suffix=native --no-transfer-progress -Pgraalvm
+#          elif [ -f "gradlew" ]; then
+#            ./gradlew dockerBuildNative --no-daemon
+#          fi
   docker-compose-test:
     if: success() && github.event_name == 'push'
     needs: build-docker-images
