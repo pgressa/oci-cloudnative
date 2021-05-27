@@ -49,8 +49,92 @@ jobs:
         env:
           TESTCONTAINERS_RYUK_DISABLED: true
   build-docker-images:
-    if: success() && github.event_name == 'push'
+    if: success()
     needs: build
+    runs-on: self-hosted
+    strategy:
+      fail-fast: false
+      matrix:
+        project-path: [
+            'api',
+            'carts',
+            'catalogue',
+            'events',
+            'fulfillment',
+            'functions/newsletter-subscription',
+            'orders',
+            'payment',
+            'user'
+        ]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2.1.4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: ${{ env.JAVA }}
+      - name: Login to OCIR
+        uses: docker/login-action@v1
+        with:
+          registry: iad.ocir.io
+          username: ${{ secrets.OCI_USERNAME }}
+          password: ${{ secrets.OCI_TOKEN }}
+          logout: false
+
+      - name: Build docker image - GraalVM
+        working-directory: src/${{ matrix.project-path }}
+        run: |
+          if [ -f "mvnw" ]; then
+            ./mvnw package -Dpackaging=docker -Djib.from.image=ghcr.io/graalvm/graalvm-ce:java11-21.1.0 -Ddocker.image.suffix=graalvm --no-transfer-progress
+          elif [ -f "gradlew" ]; then
+            ./gradlew dockerBuild --no-daemon
+          fi
+
+      - name: Build - docker image OpenJdk
+        working-directory: src/${{ matrix.project-path }}
+        run: |
+          if [ -f "mvnw" ]; then
+            ./mvnw package -Dpackaging=docker --no-transfer-progress
+          elif [ -f "gradlew" ]; then
+            ./gradlew dockerPush -PjavaBaseImage=openjdk --no-daemon
+          fi
+
+      - name: Build - docker image GraalVM Native Image
+        working-directory: src/${{ matrix.project-path }}
+        run: |
+          if [ -f "mvnw" ]; then
+            ./mvnw package -Dpackaging=docker-native -Ddocker.image.suffix=native --no-transfer-progress -Pgraalvm
+          elif [ -f "gradlew" ]; then
+            ./gradlew dockerBuildNative --no-daemon
+          fi
+  docker-compose-test:
+    if: success() && github.event_name == 'push'
+    needs: build-docker-images
+    runs-on: self-hosted
+    steps:
+      - name: Setup stack
+        working-directory: deploy/complete/docker-compose
+        run: |
+          docker-compose up -d
+      - name: Run test
+        working-directory: src/load
+        run: |
+          docker build -t mushop/load .
+          docker run mushop/load --net=host -h localhost:81 -c 5  -r 60
+      - name: Cleanup stack
+        if: ${{ always() }}
+        working-directory: deploy/complete/docker-compose
+        run: |
+          docker-compose down -t 300
+  push-docker-images:
+    if: success() && github.event_name == 'push'
+    needs: build-docker-images
     runs-on: self-hosted
     strategy:
       fail-fast: false
