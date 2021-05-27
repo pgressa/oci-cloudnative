@@ -81,8 +81,8 @@ public class CartsServiceTest extends AbstractDatabaseServiceTest {
         assertEquals(1, cart.size());
 
         final ProductAndQuantity product = cart.iterator().next();
-        assertEquals(10.00, product.getPrice());
-        assertEquals(2, product.quantity);
+        assertEquals(10.00, product.getUnitPrice());
+        assertEquals(2, product.getQuantity());
 
     }
 
@@ -100,8 +100,8 @@ public class CartsServiceTest extends AbstractDatabaseServiceTest {
         assertEquals(1, cart.size());
 
         final ProductAndQuantity product = cart.iterator().next();
-        assertEquals(10.00, product.getPrice());
-        assertEquals(3, product.quantity);
+        assertEquals(10.00, product.getUnitPrice());
+        assertEquals(3, product.getQuantity());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class CartsServiceTest extends AbstractDatabaseServiceTest {
 
     @Introspected
     static class ProductAndQuantity extends Product {
-        public final int quantity;
+        private final int quantity;
 
         @JsonCreator
         public ProductAndQuantity(@JsonProperty("id") String id,
@@ -163,6 +163,10 @@ public class CartsServiceTest extends AbstractDatabaseServiceTest {
                                   @JsonProperty("quantity") int quantity) {
             super(id, price);
             this.quantity = quantity;
+        }
+
+        public int getQuantity() {
+            return quantity;
         }
     }
 
