@@ -114,7 +114,7 @@ jobs:
 #            ./gradlew dockerBuildNative --no-daemon
 #          fi
   docker-compose-test:
-    if: success() && github.event_name == 'push'
+    if: success()
     needs: build-docker-images
     runs-on: self-hosted
     steps:
@@ -134,7 +134,7 @@ jobs:
           docker-compose down -t 300
   push-docker-images:
     if: success() && github.event_name == 'push'
-    needs: build-docker-images
+    needs: docker-compose-test
     runs-on: self-hosted
     strategy:
       fail-fast: false
