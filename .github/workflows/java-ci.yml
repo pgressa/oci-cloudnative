@@ -39,14 +39,14 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ env.JAVA }}
       - name: Build with Gradle
-        if: hashFiles('src/${{ matrix.project-path }}/gradlew') != ''
+        if: hashFiles('gradlew') != ''
         working-directory: src/${{ matrix.project-path }}
         run: |
           ./gradlew check --no-daemon  --continue
         env:
           TESTCONTAINERS_RYUK_DISABLED: true
       - name: Build with Maven
-        if: hashFiles('src/${{ matrix.project-path }}/mvnw') != ''
+        if: hashFiles('/mvnw') != ''
         working-directory: src/${{ matrix.project-path }}
         run: |
           ./mvnw test --no-transfer-progress
