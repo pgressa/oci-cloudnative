@@ -218,16 +218,6 @@
                 <artifactId>micronaut-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.graalvm.nativeimage</groupId>
-                <artifactId>native-image-maven-plugin</artifactId>
-                <configuration>
-                    <buildArgs combine.children="append">
-                        <buildArg>--verbose</buildArg>
-                        <buildArg>--debug</buildArg>
-                    </buildArgs>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.0.0</version>
