@@ -3,6 +3,7 @@ services:
   edge-router:
     image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/edge-router:1.1.0
     hostname: edge-router
+    pull_policy: always
     restart: always
     ports:
       - "81:8080"
@@ -39,6 +40,7 @@ services:
   assets:
     image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/assets:1.0.0
     restart: always
+    pull_policy: always
     cap_drop:
       - all
     cap_add:
@@ -54,6 +56,7 @@ services:
   session-db:
     image: redis:alpine
     restart: always
+    pull_policy: always
     cap_drop:
       - all
     cap_add:
@@ -72,6 +75,7 @@ services:
   storefront:
     image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/storefront:2.1.2
     restart: always
+    pull_policy: always
     cap_drop:
       - all
     cap_add:
