@@ -21,6 +21,7 @@ services:
     image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/api:1.0.0-SNAPSHOT
     hostname: api
     restart: always
+    pull_policy: always
     cap_drop:
       - all
     cap_add:
@@ -92,6 +93,7 @@ services:
   catalogue:
     image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/catalogue:1.0.0-SNAPSHOT
     restart: always
+    pull_policy: always
     depends_on:
       - oracledbcatalogue
     cap_drop:
@@ -114,6 +116,7 @@ services:
   carts:
     image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/carts:1.0.3-SNAPSHOT
     restart: always
+    pull_policy: always
     depends_on:
       - oracledbcarts
     cap_drop:
@@ -139,6 +142,7 @@ services:
   orders:
     image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/orders:1.0.0-SNAPSHOT
     restart: always
+    pull_policy: always
     cap_drop:
       - all
     cap_add:
@@ -170,6 +174,7 @@ services:
   user:
     image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/user:1.0.0-SNAPSHOT
     restart: always
+    pull_policy: always
     cap_drop:
       - all
     cap_add:
@@ -192,6 +197,7 @@ services:
   payment:
     image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/payment:1.0.0-SNAPSHOT
     restart: always
+    pull_policy: always
     cap_drop:
       - all
     cap_add:
@@ -207,6 +213,7 @@ services:
   fulfillment:
     image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/fulfillment:1.0.0-SNAPSHOT
     restart: always
+    pull_policy: always
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid
