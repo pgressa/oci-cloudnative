@@ -128,7 +128,10 @@ jobs:
       - name: Setup stack
         working-directory: deploy/complete/docker-compose
         run: |
+          export DOCKER_CLIENT_TIMEOUT=120
+          export COMPOSE_HTTP_TIMEOUT=120
           docker-compose up -d
+          docker-compose ps
       - name: Run test
         working-directory: src/load
         run: |
