@@ -14,5 +14,5 @@
     </root>
 
     <logger name="oracle.ucp" level="trace" />
-    <logger name="io.micronaut.http" level="debug"/>
+    <logger name="io.micronaut.http" level="info"/>
 </configuration>
