@@ -234,6 +234,7 @@
                     <nativeImageBuildArgs>
                         <nativeImageBuildArgs>--verbose</nativeImageBuildArgs>
                         <nativeImageBuildArg>-H:IncludeResourceBundles=oracle.json.common.Messages</nativeImageBuildArg>
+                        <nativeImageBuildArg>-H:Log=registerResource</nativeImageBuildArg>
                     </nativeImageBuildArgs>
                 </configuration>
             </plugin>
