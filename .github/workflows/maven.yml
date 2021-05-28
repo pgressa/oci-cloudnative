@@ -78,7 +78,7 @@ jobs:
 #      - name: Push docker image - OpenJdk
 #        working-directory: src/${{ matrix.project-path }}
 #        run: ./mvnw deploy -Dpackaging=docker --no-transfer-progress
-#      - name: Push docker image - GraalVM Native Image
+      - name: Push docker image - GraalVM Native Image
         working-directory: src/${{ matrix.project-path }}
         run: |
           ./mvnw clean package deploy -Dpackaging=docker-native -Ddocker.image.suffix=native --no-transfer-progress -Pgraalvm
