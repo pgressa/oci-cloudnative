@@ -132,8 +132,8 @@ jobs:
       - name: Run test
         working-directory: src/load
         run: |
-          docker build -t mushop/load .
-          docker run mushop/load --net=host -h localhost:81 -c 5  -r 60
+          docker build -t mushop/load:latest .
+          docker run --net=host mushop/load:latest -h localhost:81 -c 5 -r 60
       - name: Cleanup stack
         if: ${{ always() }}
         working-directory: deploy/complete/docker-compose
