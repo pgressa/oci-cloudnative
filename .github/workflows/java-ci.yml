@@ -136,7 +136,7 @@ jobs:
 
           #
           # Generate override docker compose so we use latest build docker images
-          grep -B 1 -e 'SNAPSHOT' docker-compose.yml | sed -E "s/(.*):(.*):(.*)/\1:\2:$GITHUB_SHA/g" > docker-compose.override.yml
+          grep -B 1 -e "services:" -e 'SNAPSHOT' docker-compose.yml | sed -E "s/(.*):(.*):(.*)/\1:\2:$GITHUB_SHA/g" | grep -v -e '--' >> docker-compose.override.yml
 
           docker-compose up -d
           docker-compose ps
