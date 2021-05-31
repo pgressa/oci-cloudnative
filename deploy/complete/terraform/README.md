@@ -72,7 +72,7 @@ Then edit the `mushop.tfvars`:
     terraform plan --var-file mushop.tfvars -chdir deploy/complete/terraform
     ```
 
-3. Plan the execution:
+3. Execute the plan:
     ```bash
     # From this directory
     terraform apply --var-file mushop.tfvars
@@ -80,3 +80,30 @@ Then edit the `mushop.tfvars`:
     # From repository root directory
     terraform apply --var-file mushop.tfvars -chdir deploy/complete/terraform
     ```
+
+    Note the deployment of all resources may take a while (~30 minutes). After successful deployment you should see output variables like below:
+    ```
+    Outputs:
+
+    autonomous_database_password = "...."
+    comments = "The application URL will be unavailable for a few minutes after provisioning while the application is configured and deployed to Kubernetes"
+    deploy_id = "R8Mm"
+    deployed_oke_kubernetes_version = "v1.19.7"
+    deployed_to_region = "us-ashburn-1"
+    dev = "Made with ❤ by Oracle Developers"
+    external_ip = "129.159.91.46"
+    generated_private_key_pem = <<EOT
+    ...
+    -----END RSA PRIVATE KEY-----
+
+    EOT
+    grafana_admin_password = "....."
+    grafana_url = "http://129.159.91.46/grafana"
+    kubeconfig_for_kubectl = "export KUBECONFIG=./generated/kubeconfig"
+    mushop_source_code = "https://github.com/pgressa/oraclecloud-cloudnative"
+    mushop_url = "http://129.159.91.46"
+    mushop_url_button = "http://129.159.91.46"
+    mushop_url_https = "https://129.159.91.46"
+    ```
+    
+    To access MuShop use the `mushop_url_https` output variable.
