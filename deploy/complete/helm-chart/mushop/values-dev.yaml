@@ -1,6 +1,6 @@
 global:
   ociAuthSecret: oci-credentials        # OCI authentication credentials secret name
-  ossStreamSecret: oss-connection       # Previously created streaming secret name
+  ossConnectionSecret: oss-connection   # Previously created streaming secret name
   oadbAdminSecret: oadb-admin           # Name of DB Admin secret created separately
   oadbWalletSecret: oadb-wallet         # Name of wallet secret created separately
   oadbConnectionSecret: oadb-connection # Name of connection secret created separately
@@ -47,5 +47,5 @@ user:
  
 secrets:
   streams:
-    streamId:             # Stream OCID
-    messageEndpoint:      # Stream messages endpoint URL 
+    bootstrapServers:     # Stream pool bootstrap servers
+    jaasConfig:           # Stream pool jaas config

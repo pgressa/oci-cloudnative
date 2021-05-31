@@ -4,7 +4,6 @@ global:
   osb:
     instanceName: mushop
   ociAuthSecret:
-  ossStreamSecret:
   oadbAdminSecret:
   oadbWalletSecret:
   oadbConnectionSecret:
@@ -63,8 +62,8 @@ user:
 
 secrets:
   streams:
-    streamId: 
-    messageEndpoint: 
+    bootstrapServers:
+    jaasConfig:
   bucket:
     region:
     name:
