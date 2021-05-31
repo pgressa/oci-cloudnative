@@ -67,6 +67,7 @@ dependencies {
 }
 
 nativeImage {
+    args "-H:+AddAllCharsets"
     args "-H:IncludeResourceBundles=oracle.json.impl.binary.Messages"
     args "-H:IncludeResourceBundles=oracle.json.rdbms.Messages"
     args "-H:IncludeResourceBundles=oracle.json.parser.Messages"
