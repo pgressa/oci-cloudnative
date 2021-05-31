@@ -23,7 +23,8 @@ jobs:
             'functions/newsletter-subscription',
             'orders',
             'payment',
-            'user'
+            'user',
+            'carts'
         ]
     steps:
       # https://github.com/actions/virtual-environments/issues/709

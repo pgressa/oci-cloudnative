@@ -15,7 +15,6 @@ jobs:
     strategy:
       matrix:
         project-path: [
-            'carts'
         ]
     steps:
       # https://github.com/actions/virtual-environments/issues/709
