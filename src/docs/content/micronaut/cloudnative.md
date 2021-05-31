@@ -7,7 +7,7 @@ weight: 1
 
 A significant advantage of Micronaut is the ability to use Cloud Native configuration.
 
-Each Micronaut application is able to define a `application-oraclecloud.yml` file that is automatically activated when deployed into the Oracle Cloud environment.
+Each Micronaut application is able to define an `application-oraclecloud.yml` file that is automatically activated when deployed into the Oracle Cloud environment.
 
 This allows the Micronaut applications to adapt to run on any Cloud and simplifies deployment.
 

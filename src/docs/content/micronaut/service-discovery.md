@@ -5,7 +5,7 @@ disableBreadcrumb: true
 weight: 2
 ---
 
-In a Microservice architecture services need to discovery each other in a decoupled manner that is independent of the service discovery mechanism.
+In a Microservice architecture services need to discover each other in a decoupled manner that is independent of the service discovery mechanism.
 
 Micronaut features a [Service Discovery abstraction](https://docs.micronaut.io/latest/guide/#serviceDiscovery) that allows service discovery to be backed onto different implementations including Kubernetes, HashiCorp Consul, Eureka and more.
 

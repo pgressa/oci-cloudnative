@@ -1,5 +1,5 @@
 ---
-title: "Advantages of Micronaut"
+title: "Micronaut Advantages"
 draft: false
 disableBreadcrumb: true
 weight: 100

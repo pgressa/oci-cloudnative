@@ -5,7 +5,7 @@ disableBreadcrumb: true
 weight: 4
 ---
 
-The original MuShop applications implemented exposing metrics inconsistently with some applications exporting metrics and others no. The applications that did export metrics provided support only for Prometheus, for example in the Go code:
+The original MuShop applications implemented exposing metrics inconsistently with some applications exporting metrics and others not. The applications that did export metrics provided support only for Prometheus, for example in the Go code:
 
 ```golang
 r.Handle("/metrics", promhttp.Handler())

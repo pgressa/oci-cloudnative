@@ -17,7 +17,7 @@ The original MuShop `api` service includes a lot of error prone logic to assert 
   })
 ```
 
-If is very easy to forget an `isLoggedIn` call causing a security vulnerability in your application. 
+It is very easy to forget an `isLoggedIn` call causing a security vulnerability in your application. 
 
 The Micronaut version of the Gateway includes the [Micronaut Security](https://micronaut-projects.github.io/micronaut-security/latest/guide/) module which is locked down by default with every request to the API service by default returning a 401 unless the user is logged in.
 
