@@ -223,7 +223,7 @@
                 <version>3.0.0</version>
                 <configuration>
                     <to>
-                        <image>iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/carts-graeme-test:${project.version}</image>
+                        <image>iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/${project.artifactId}-${docker.image.suffix}:${project.version}</image>
                     </to>
                 </configuration>
             </plugin>         
