@@ -3,8 +3,8 @@
 The Helm charts here can be used to install all components of MuShop to the Kubernetes cluster.
 For practical purposes, multiple charts are used to separate installation into the following steps:
 
-1. [`setup`](#setup) Installs _optional_ chart dependencies on the cluster
-1. [`provision`](#provision) Provisions OCI resources integrated with Service Broker _(optional)_
+1. **Not supported yet**  [`setup`](#setup) Installs _optional_ chart dependencies on the cluster 
+1. **Not supported yet**  [`provision`](#provision) Provisions OCI resources integrated with Service Broker _(optional)_
 1. [`mushop`](#installation) Deploys the MuShop application runtime
 
 ## Setup
@@ -58,36 +58,11 @@ See [./provision/README.md](./provision/README.md) for complete usage details.
 
 ## Installation
 
-### QuickStart
-
-For an installation without connecting Oracle Cloud Infrastructure services, use the following:
-
-```bash
-helm install mymushop mushop \
-  --namespace mushop \
-  --create-namespace \
-  --set global.mock.service=all
-```
-
 ### Configuration
 
 Deploying the full application requires cloud backing services from Oracle Cloud Infrastructure.
-These services are configured using kubernetes secrets.
+These services are configured using kubernetes secrets. 
 
-1. Create a secret `oci-credentials` with Oracle Cloud Infrastructure [API credentials](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionssetupapikey.htm):
-
-    ```shell
-    kubectl create secret generic oci-credentials \
-      --namespace mushop \
-      --from-literal=tenancy=<TENANCY_OCID> \
-      --from-literal=user=<USER_OCID> \
-      --from-literal=region=<USER_OCI_REGION> \
-      --from-literal=fingerprint=<USER_PUBLIC_API_KEY_FINGERPRINT> \
-      --from-literal=passphrase=<PASSPHRASE_STRING> \
-      --from-file=privatekey=<PATH_OF_USER_PRIVATE_API_KEY>
-    ```
-
-    > **NOTE:** The passphrase entry is **required**. If you do not have passphrase for your key, just leave empty
 
 1. Provision an Autonomous Transaction Processing (ATP) database. Once **RUNNING** download the DB Connection Wallet and configure secrets as follows:
 
@@ -113,7 +88,8 @@ These services are configured using kubernetes secrets.
         kubectl create secret generic oadb-connection \
           --namespace mushop \
           --from-literal=oadb_wallet_pw='<DB_WALLET_PASSWORD>' \
-          --from-literal=oadb_service='<DB_TNS_NAME>'
+          --from-literal=oadb_service='<DB_TNS_NAME>' \
+          --from-literal=oadb_ocid='<DB_OCID>' \
         ```
 
         > Each database has 5 unique TNS Names displayed when the Wallet is downloaded an example would be `mushopdb_TP`.
@@ -132,21 +108,36 @@ These services are configured using kubernetes secrets.
         ```shell
         kubectl create secret generic oss-connection \
           --namespace mushop \
-          --from-literal=compartmentId='<COMPARTMENT_OCID>' \
-          --from-literal=region='<REGION_NAME>' \
-          --from-literal=streamId='<STREAM_OCID>' \
-          --from-literal=streamName='<STREAM_NAME>'
+          --from-literal=bootstrapServers='<OSS STREAM BOOTSTRAP SERVERS>' \
+          --from-literal=jaasConfig='<JAAS CONFIG>'
         ```
+    Note: The <JAAS CONFIG> format is: 
+    ```
+    jaasConfig="org.apache.kafka.common.security.plain.PlainLoginModule required username=\"<USER_COMPARTMENT_NAME>/<USER_NAME>/<OSS_POOL_ID>\" password=\"<USER_TOKEN>\";"
+    ```
+    Make sure the user has permission to write to the given stream.
 
+1. Configure a config map with deployment details:
+    
+    ```shell
+    kubectl create cm oci-deployment \
+      --namespace mushop \
+      --from-literal=compartment_id='<COMPARTMENT ID>' \
+      --from-literal=region='<OCI REGION>'
+    ```
+    
 1. Make a copy of the [`values-dev.yaml`](./mushop/values-dev.yaml) file in this directory. Then complete the missing values (e.g. secrets) like the following:
 
     ```yaml
     global:
-      ociAuthSecret: oci-credentials        # OCI authentication credentials secret
-      ossStreamSecret: oss-connection       # Name of Stream connection secret
-      oadbAdminSecret: oadb-admin           # Name of DB Admin secret
-      oadbWalletSecret: oadb-wallet         # Name of Wallet secret
-      oadbConnectionSecret: oadb-connection # Name of DB Connection secret
+      ossConnectionSecret: oss-connection     # Name of Stream connection secret
+      oadbAdminSecret: oadb-admin             # Name of DB Admin secret
+      oadbWalletSecret: oadb-wallet           # Name of Wallet secret
+      oadbConnectionSecret: oadb-connection   # Name of DB Connection secret
+      ociDeploymentConfigMap: oci-deployment  # Name of Deployment details config map
+    tags:
+      atp: true                               # General flag to use Oracle Autonomous Database
+      streaming: true                         # General flag to use Oracle Streaming Service
     ```
 
     > **NOTE:** If it's desired to connect a separate databases for a given service, you can specify values specific for each service, such as `carts.oadbAdminSecret`, `carts.oadbWalletSecret`... 
@@ -181,11 +172,6 @@ If you want to troubleshoot the chart, add the `--dry-run` and `--debug` flags a
 helm install -f myvalues.yaml mymushop mushop --dry-run --debug
 ```
 
-If using Helm v2:
-
-```bash
-helm install mushop --dry-run --debug --name mymushop -f myvalues.yaml
-```
 
 ## Prod/Test Installation
 
@@ -218,12 +204,6 @@ kubectl create ns cert-manager
 helm install cert-manager jetstack/cert-manager
 ```
 
-If using Helm v2:
-
-```text
-helm install --name cert-manager --namespace cert-manager jetstack/cert-manager
-```
-
 ### Installing Mushop
 
 For prod/test installation, you can use the `values-prod.yaml` and call Helm install and pass in the values file:
@@ -232,11 +212,6 @@ For prod/test installation, you can use the `values-prod.yaml` and call Helm ins
 helm install -f /mushop/values-prod.yaml mymushop mushop --dry-run --debug
 ```
 
-If using Helm v2:
-
-```bash
-helm install --dry-run --debug mushop -f /mushop/values-prod.yaml --name mymushop
-```
 
 ## Creating all/individual YAML files
 
