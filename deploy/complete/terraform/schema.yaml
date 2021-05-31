@@ -8,7 +8,7 @@ informationalText: "This stack provision a new OKE cluster (optionally can re-us
 schemaVersion: 1.1.0
 version: "20190304"
 
-logoUrl:
+logoUrl: https://raw.githubusercontent.com/pgressa/oraclecloud-cloudnative/a71b197556b75e0b2bffc98e3f4e698f6908797c/images/icon/mushop-zip-file.svg
 
 source:
   type: quickstart
@@ -162,6 +162,28 @@ variables:
     title: "Show advanced options?"
     description: "Shows advanced options, allowing enable customer-managed encryption keys, select your ssh key, select/unselect cluster utilities, do not create policies, and other advanced options"
     visible: true
+
+  # MuSHop
+  mushop_mock_mode_all:
+    visible: false
+    type: boolean
+    required: true
+    title: "Enable Mock Mode (If enabled, does NOT provision ATP Database, Streaming or Object Storage)"
+
+  apm_connection_name:
+    visible: false
+    type: string
+    required: false
+
+  oss_conection:
+    visible: false
+    type: string
+    required: false
+
+  oci_deployment:
+    visible: false
+    type: string
+    required: false
 
   # OKE Cluster
   create_new_oke_cluster:
@@ -485,7 +507,7 @@ variables:
   newsletter_function_approved_email_address:
     type: string
     required: true
-    title: "Email sender for Newsletter Subscription Function"
+    title: "Email sender for Newsletter Subscription Function."
     visible:
       and:
         - create_oracle_function_newsletter
@@ -553,7 +575,7 @@ variables:
     title: "Create Oracle Cloud Streaming for Events service"
     required: true
     visible: true
-    default: true
+    default: false
 
   # Cluster Utilities
   grafana_enabled:
