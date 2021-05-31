@@ -77,10 +77,6 @@ nativeImage {
     args "--initialize-at-build-time=jdk.management.jfr.SettingDescriptorInfo"
 }
 
-test {
-    jvmArgs "-agentlib:native-image-agent=config-output-dir=dump"
-}
-
 application {
     mainClass.set("mushop.carts.Application")
 }
