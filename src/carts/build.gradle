@@ -64,6 +64,7 @@ dependencies {
 
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:oracle-xe")
+    testImplementation("org.hamcrest:hamcrest")
     testImplementation("org.testcontainers:testcontainers")
 }
 
