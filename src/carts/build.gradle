@@ -19,6 +19,16 @@ micronaut {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force 'com.oracle.oci.sdk:oci-java-sdk-circuitbreaker:1.37.0'
+        force 'com.oracle.oci.sdk:oci-java-sdk-common:1.37.0'
+        force 'com.oracle.oci.sdk:oci-java-sdk-monitoring:1.37.0'
+        force 'com.oracle.oci.sdk:oci-java-sdk-workrequests:1.37.0'
+        force 'com.oracle.oci.sdk:oci-java-sdk-database:1.37.0'
+    }
+}
+
 dependencies {
 
     annotationProcessor("io.micronaut.micrometer:micronaut-micrometer-annotation:3.4.0")
