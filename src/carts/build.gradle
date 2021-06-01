@@ -48,7 +48,7 @@ dependencies {
     implementation("io.micronaut.sql:micronaut-jdbc-ucp")
     implementation("io.micronaut.data:micronaut-data-tx")
 
-    runtimeOnly("io.micronaut.oraclecloud:micronaut-oraclecloud-atp:1.3.4")
+    runtimeOnly("io.micronaut.oraclecloud:micronaut-oraclecloud-atp")
     runtimeOnly("com.oracle.oci.sdk:oci-java-sdk-monitoring")
 
     // Tracing
@@ -89,10 +89,6 @@ java {
 if (javaBaseImage == "graalvm") {
     dockerfile {
         baseImage = "ghcr.io/graalvm/graalvm-ce:ol8-java11-21.1.0"
-    }
-} else {
-    dockerfile {
-        baseImage =  "openjdk:16"
     }
 }
 
