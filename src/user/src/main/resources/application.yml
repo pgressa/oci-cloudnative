@@ -33,7 +33,7 @@ endpoints:
 datasources:
   default:
     dialect: oracle
-    url: jdbc:oracle:thin:@localhost:1521/xe
+    url: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(HOST=localhost)(PORT=1521)(PROTOCOL=tcp))(CONNECT_DATA=(SERVICE_NAME=xe)))
     driverClassName: oracle.jdbc.OracleDriver
     username: system
     password: oracle
