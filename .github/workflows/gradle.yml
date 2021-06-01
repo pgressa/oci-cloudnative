@@ -52,21 +52,14 @@ jobs:
         env:
           TESTCONTAINERS_RYUK_DISABLED: true
   push-docker-images:
-    if: success() && github.event_name == 'push'
+#    if: success() && github.event_name == 'push'
     needs: build
     runs-on: self-hosted
     strategy:
       fail-fast: false
       matrix:
         project-path: [
-            'api',
-            'catalogue',
-            'events',
-            'fulfillment',
-            'functions/newsletter-subscription',
-            'orders',
-            'payment',
-            'user'
+            'events'
         ]
     steps:
       - uses: actions/checkout@v2
@@ -88,12 +81,12 @@ jobs:
           username: ${{ secrets.OCI_USERNAME }}
           password: ${{ secrets.OCI_TOKEN }}
           logout: false
-      - name: Push docker image - GraalVM
-        working-directory: src/${{ matrix.project-path }}
-        run: ./gradlew dockerPush --no-daemon
-      - name: Push docker image - OpenJdk
-        working-directory: src/${{ matrix.project-path }}
-        run: ./gradlew dockerPush -PjavaBaseImage=openjdk --no-daemon
+#      - name: Push docker image - GraalVM
+#        working-directory: src/${{ matrix.project-path }}
+#        run: ./gradlew dockerPush --no-daemon
+#      - name: Push docker image - OpenJdk
+#        working-directory: src/${{ matrix.project-path }}
+#        run: ./gradlew dockerPush -PjavaBaseImage=openjdk --no-daemon
       - name: Push docker image - GraalVM Native Image
         working-directory: src/${{ matrix.project-path }}
         run: ./gradlew dockerPushNative --no-daemon
