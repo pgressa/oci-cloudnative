@@ -23,12 +23,10 @@ import io.micronaut.security.rules.SecurityRule;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -36,7 +34,6 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @MuService
@@ -50,33 +47,28 @@ public class CartsService {
     private final CartsClient client;
     private final CatalogueClient catalogueClient;
 
-    public CartsService(CartsClient client, CatalogueClient catalogueClient) {
+    CartsService(CartsClient client, CatalogueClient catalogueClient) {
         this.client = client;
         this.catalogueClient = catalogueClient;
     }
 
-    @Operation(
-            summary = "Get cart",
-            description = "Get current cart items.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Returns items in cart."),
-            },
-            tags = {"cart"}
-    )
+    /**
+     * Get current cart items.
+     *
+     * @return Returns items in the cart
+     */
+    @Tag(name="cart") 
     @Get(value = "/cart", produces = MediaType.APPLICATION_JSON)
     Single<List<CartItem>> getCart(@Parameter(hidden = true) @CartId UUID cartID) {
         return client.getCartItems(cartID)
                 .onErrorReturnItem(Collections.emptyList());
     }
 
-    @Operation(
-            summary = "Deletes cart",
-            description = "Deletes current cart.",
-            responses = {
-                    @ApiResponse(responseCode = "204", description = "Cart deleted."),
-            },
-            tags = {"cart"}
-    )
+    /**
+     * Deletes current cart
+     */
+    @Tag(name="cart") 
+    @ApiResponse(responseCode = "204", description = "Cart deleted.")
     @Delete(value = "/cart", produces = MediaType.APPLICATION_JSON)
     @Status(HttpStatus.NO_CONTENT)
     @TrackEvent("delete:cart")
@@ -85,14 +77,11 @@ public class CartsService {
                     .onErrorComplete();
     }
 
-    @Operation(
-            summary = "Add item",
-            description = "Adds item to current cart.",
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "Item added to cart."),
-            },
-            tags = {"cart"}
-    )
+    /**
+     * Adds item to current cart.
+     */
+    @ApiResponse(responseCode = "201", description = "Item added to cart.")
+    @Tag(name="cart") 
     @Status(HttpStatus.CREATED)
     @Post(value = "/cart")
     @TrackEvent("cart:addItem")
@@ -120,14 +109,12 @@ public class CartsService {
             ));
     }
 
-    @Operation(
-            summary = "Update item",
-            description = "Updates item in current cart.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Item updated."),
-            },
-            tags = {"cart"}
-    )
+    /**
+     * Updates item in current cart.
+     *
+     */
+    @Tag(name="cart") 
+    @ApiResponse(responseCode = "200", description = "Item updated.")
     @Status(HttpStatus.OK)
     @Post(value = "/cart/update")
     Completable updateItem(
@@ -150,14 +137,13 @@ public class CartsService {
                 ));
     }
 
-    @Operation(
-            summary = "Delete cart item",
-            description = "Deletes item from cart.",
-            responses = {
-                    @ApiResponse(responseCode = "204", description = "Item removed."),
-            },
-            tags = {"cart"}
-    )
+    /**
+     * Deletes item from cart.
+     *
+     * @param id The item ID
+     */
+    @ApiResponse(responseCode = "204", description = "Item removed.")
+    @Tag(name="cart") 
     @Delete(value = "/cart/{id}", produces = MediaType.APPLICATION_JSON)
     @Status(HttpStatus.NO_CONTENT)
     @TrackEvent("delete:cartItem")
@@ -221,11 +207,11 @@ public class CartsService {
     @Introspected
     static class CartItem {
 
-        private String id;
+        private final String id;
 
         private String itemId;
 
-        private int quantity;
+        private final int quantity;
 
         private BigDecimal unitPrice;
 

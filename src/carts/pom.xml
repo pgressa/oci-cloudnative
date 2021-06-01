@@ -226,7 +226,7 @@
                         <image>iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/${project.artifactId}-${docker.image.suffix}:${project.version}</image>
                     </to>
                 </configuration>
-            </plugin>
+            </plugin>         
             <plugin>
                 <groupId>io.micronaut.build</groupId>
                 <artifactId>micronaut-maven-plugin</artifactId>
