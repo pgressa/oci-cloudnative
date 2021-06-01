@@ -1,6 +1,7 @@
 package mushop.carts.soda;
 
 import io.micronaut.context.BeanLocator;
+import io.micronaut.context.annotation.Replaces;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 @Singleton
+@Replaces(io.micronaut.oraclecloud.atp.jdbc.upc.UcpPoolConfigurationListener.class)
 @Requires(classes = PoolDataSource.class)
 @Requires(beans = OracleWalletArchiveProvider.class)
 @Internal
