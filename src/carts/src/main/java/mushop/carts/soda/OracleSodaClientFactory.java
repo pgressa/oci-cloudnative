@@ -7,7 +7,6 @@ import io.micronaut.context.annotation.Parameter;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.io.ResourceLoader;
-import io.micronaut.jdbc.BasicJdbcConfiguration;
 import io.micronaut.transaction.jdbc.DelegatingDataSource;
 import oracle.soda.OracleCollection;
 import oracle.soda.OracleDatabase;
@@ -43,66 +42,51 @@ public class OracleSodaClientFactory {
     @Context
     protected OracleRDBMSClient sodaClient(
             DataSource dataSource,
-            @Parameter BasicJdbcConfiguration jdbcConfiguration,
             @Parameter @Nullable OracleSodaConfiguration configuration,
             ResourceLoader resourceLoader) {
         OracleSodaConfiguration.SodaConfiguration soda = configuration != null ? configuration.getSoda() : null;
-        if (soda != null) {
-            final boolean isCreateSodaUser = soda.isCreateSodaUser();
-            final List<String> collections = soda.getCreateCollections();
-            final Properties properties = soda.getProperties();
-            final OracleRDBMSClient client = new OracleRDBMSClient(properties);
-            final boolean hasCollectionsToCreate = !collections.isEmpty();
-            if (isCreateSodaUser) {
-                final String username = jdbcConfiguration.getUsername();
-//                PoolDataSource poolDataSource = (PoolDataSource) DelegatingDataSource.unwrapDataSource(dataSource);
-//                try (Connection connection = DelegatingDataSource.unwrapDataSource(dataSource).getConnection()) {
-//                    try (PreparedStatement preparedStatement = connection.prepareStatement("GRANT SODA_APP TO " + username)) {
-//                        preparedStatement.execute();
-//                    }
-//                } catch (SQLException e) {
-//                    throw new ConfigurationException("Error initializing SODA: " + e.getMessage(), e);
-//                }
-            }
-            if (hasCollectionsToCreate) {
-                try (Connection connection = DelegatingDataSource.unwrapDataSource(dataSource).getConnection()) {
-                    final OracleDatabase db = client.getDatabase(connection);
-                    for (String collectionName : collections) {
-                        // Create the carts collection if it does not exist
-                        LOG.info("Initializing DB connection {}", collectionName);
-                        OracleCollection col = db.openCollection(collectionName);
-                        if (col == null) {
-                            LOG.info("Collection '{}' does not exist, creating...", collectionName);
-                            // Create a collection (see src/main/resources/metadata.json)
-                            // It is OK if multiple processes try to create the collection at the
-                            // same time. The collection will simply be returned by createCollection() if it
-                            // already exists.
-                            final InputStream metaData = resourceLoader.getResourceAsStream("classpath:soda/" + collectionName + "-metadata.json").orElse(null);
-                            if (metaData != null) {
-                                try (metaData) {
-                                    OracleDocument collMeta = db.createDocumentFrom(metaData);
-                                    db.admin().createCollection(collectionName, collMeta);
-                                } catch (OracleException | IOException e) {
-                                    throw new ConfigurationException("Error creating collection [" + collectionName + "]" + e.getMessage(), e);
-                                }
-                            } else {
-                                try {
-                                    db.admin().createCollection(collectionName);
-                                } catch (OracleException e) {
-                                    throw new ConfigurationException("Error creating collection [" + collectionName + "]" + e.getMessage(), e);
-                                }
-                            }
-
-                        }
-                    }
-                } catch (SQLException | OracleException e) {
-                    throw new ConfigurationException("Error initializing SODA: " + e.getMessage(), e);
-                }
-            }
-
-            return client;
-        } else {
+        if (soda == null) {
             return new OracleRDBMSClient();
         }
+        final List<String> collections = soda.getCreateCollections();
+        final Properties properties = soda.getProperties();
+        final OracleRDBMSClient client = new OracleRDBMSClient(properties);
+        final boolean hasCollectionsToCreate = !collections.isEmpty();
+        if (hasCollectionsToCreate) {
+            try (Connection connection = DelegatingDataSource.unwrapDataSource(dataSource).getConnection()) {
+                final OracleDatabase db = client.getDatabase(connection);
+                for (String collectionName : collections) {
+                    // Create the carts collection if it does not exist
+                    LOG.info("Initializing DB connection {}", collectionName);
+                    OracleCollection col = db.openCollection(collectionName);
+                    if (col == null) {
+                        LOG.info("Collection '{}' does not exist, creating...", collectionName);
+                        // Create a collection (see src/main/resources/metadata.json)
+                        // It is OK if multiple processes try to create the collection at the
+                        // same time. The collection will simply be returned by createCollection() if it
+                        // already exists.
+                        final InputStream metaData = resourceLoader.getResourceAsStream("classpath:soda/" + collectionName + "-metadata.json").orElse(null);
+                        if (metaData != null) {
+                            try (metaData) {
+                                OracleDocument collMeta = db.createDocumentFrom(metaData);
+                                db.admin().createCollection(collectionName, collMeta);
+                            } catch (OracleException | IOException e) {
+                                throw new ConfigurationException("Error creating collection [" + collectionName + "]" + e.getMessage(), e);
+                            }
+                        } else {
+                            try {
+                                db.admin().createCollection(collectionName);
+                            } catch (OracleException e) {
+                                throw new ConfigurationException("Error creating collection [" + collectionName + "]" + e.getMessage(), e);
+                            }
+                        }
+
+                    }
+                }
+            } catch (SQLException | OracleException e) {
+                throw new ConfigurationException("Error initializing SODA: " + e.getMessage(), e);
+            }
+        }
+        return client;
     }
 }
