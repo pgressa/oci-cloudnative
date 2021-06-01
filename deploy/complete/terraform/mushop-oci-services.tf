@@ -60,8 +60,9 @@ resource "kubernetes_secret" "oapm-connection" {
     namespace = kubernetes_namespace.mushop_namespace.id
   }
   data = {
-    zipkin_url        = "https://aaaac6gzqsj7waaaaaaaaaafse.apm-agt.us-ashburn-1.oci.oraclecloud.com"
-    zipkin_path       = "/20200101/observations/public-span?dataFormat=zipkin&dataFormatVersion=2&dataKey=ISTRJC2G5SMYXA72VPLX6CM4IGWP76J"
+    zipkin_url        = var.apm_zipkin_url
+    zipkin_path       = var.apm_zipkin_path
+    zipkin_enabled    = var.apm_zipkin_enabled
   }
 }
 

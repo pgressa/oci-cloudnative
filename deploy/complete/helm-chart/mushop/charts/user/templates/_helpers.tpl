@@ -175,6 +175,11 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
     secretKeyRef:
       name: {{ $oapmConnection }}
       key: zipkin_path
+- name: TRACING_ZIPKIN_ENABLED
+  valueFrom:
+    secretKeyRef:
+      name: {{ $oapmConnection }}
+      key: zipkin_enabled
 {{- end -}}
 
 {{/* OIMS configuration */}}

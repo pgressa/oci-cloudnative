@@ -577,6 +577,32 @@ variables:
     visible: true
     default: false
 
+  # Oracle Cloud Application Monitoring service
+  apm_zipkin_enabled:
+    type: boolean
+    title: "Enable Application Monitoring tracing"
+    required: true
+    visible: true
+    default: false
+
+  apm_zipkin_url:
+    type: string
+    title: "APM Zipkin url"
+    description: "Copy here the APM domain Data Upload Endpoint."
+    required: false
+    visible:
+      and:
+        - apm_zipkin_enabled
+
+  apm_zipkin_path:
+    type: string
+    title: "APM Zipkin path"
+    description: "The format is: \"/20200101/observations/public-span?dataFormat=zipkin&dataFormatVersion=2&dataKey=<APM DOMAIN PUBLIC DATA KEY>\""
+    required: false
+    visible:
+      and:
+        - apm_zipkin_enabled
+
   # Cluster Utilities
   grafana_enabled:
     type: boolean
