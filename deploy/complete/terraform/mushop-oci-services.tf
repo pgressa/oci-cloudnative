@@ -251,11 +251,8 @@ resource "kubernetes_secret" "oos_bucket" {
 
 ## OCI Functions
 
-module "newsletter_url" {
-  source  = "matti/urlparse/external"
-  version = "0.2.0"
-  url = oci_apigateway_deployment.fn_newsletter_deployment[0].endpoint
-  count = var.create_oracle_function_newsletter ? 1 : 0
+locals {
+  function_url = regex("^(?:(?P<scheme>[^:/?#]+):)?(?://(?P<authority>[^/?#]*))?", oci_apigateway_deployment.fn_newsletter_deployment[0].endpoint)
 }
 
 resource "kubernetes_service" "newsletter_svc" {
@@ -265,7 +262,7 @@ resource "kubernetes_service" "newsletter_svc" {
   }
   spec {
     type = "ExternalName"
-    external_name = module.newsletter_url[0].host
+    external_name = local.function_url["authority"]
     port {
       target_port = "443"
       port = 443

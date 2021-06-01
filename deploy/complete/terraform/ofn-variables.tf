@@ -6,6 +6,7 @@ variable "create_oracle_function_newsletter" {
 
 variable "newsletter_function_approved_email_address" {
   description = "Email sender for Newsletter Subscription Function"
+  default = "newsletter@mushop.org"
 }
 variable "newsletter_function_display_name" {
   default = "newsletter-subscription"
