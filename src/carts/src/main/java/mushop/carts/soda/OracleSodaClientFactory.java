@@ -14,6 +14,7 @@ import oracle.soda.OracleDatabase;
 import oracle.soda.OracleDocument;
 import oracle.soda.OracleException;
 import oracle.soda.rdbms.OracleRDBMSClient;
+import oracle.ucp.jdbc.PoolDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
@@ -56,17 +58,14 @@ public class OracleSodaClientFactory {
             final boolean hasCollectionsToCreate = !collections.isEmpty();
             if (isCreateSodaUser) {
                 final String username = jdbcConfiguration.getUsername();
-                try (Connection connection = DriverManager.getConnection(
-                        jdbcConfiguration.getUrl(),
-                        jdbcConfiguration.getUsername(),
-                        jdbcConfiguration.getPassword()
-                )) {
-
-                    connection.prepareStatement("GRANT SODA_APP TO " + username).execute();
-
-                } catch (SQLException e) {
-                    throw new ConfigurationException("Error initializing SODA: " + e.getMessage(), e);
-                }
+//                PoolDataSource poolDataSource = (PoolDataSource) DelegatingDataSource.unwrapDataSource(dataSource);
+//                try (Connection connection = DelegatingDataSource.unwrapDataSource(dataSource).getConnection()) {
+//                    try (PreparedStatement preparedStatement = connection.prepareStatement("GRANT SODA_APP TO " + username)) {
+//                        preparedStatement.execute();
+//                    }
+//                } catch (SQLException e) {
+//                    throw new ConfigurationException("Error initializing SODA: " + e.getMessage(), e);
+//                }
             }
             if (hasCollectionsToCreate) {
                 try (Connection connection = DelegatingDataSource.unwrapDataSource(dataSource).getConnection()) {
