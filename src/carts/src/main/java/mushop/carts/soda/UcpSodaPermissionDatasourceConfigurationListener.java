@@ -46,17 +46,17 @@ public class UcpSodaPermissionDatasourceConfigurationListener implements BeanCre
 
         OracleSodaConfiguration.SodaConfiguration soda = beanLocator.findBean(OracleSodaConfiguration.SodaConfiguration.class, Qualifiers.byName(datasourceConfiguration.getName())).orElse(null);
         if (soda == null) {
-            LOG.info("Soda configuration not found for datasource: {}", datasourceConfiguration.getUsername());
+            LOG.info("Soda configuration not found for datasource: {}", datasourceConfiguration.getName());
             return datasourceConfiguration;
         }
         if (!soda.isCreateSodaUser()) {
-            LOG.info("Soda create user is disabled for datasource: {}", datasourceConfiguration.getUsername());
+            LOG.info("Soda create user is disabled for datasource: {}", datasourceConfiguration.getName());
             return datasourceConfiguration;
         }
         AutonomousDatabaseConfiguration autonomousDatabaseConfiguration = beanLocator.findBean(AutonomousDatabaseConfiguration.class,
                 Qualifiers.byName(datasourceConfiguration.getName())).orElse(null);
         if (autonomousDatabaseConfiguration == null) {
-            LOG.info("Autonomous database configuration is missing for datasource: {}", datasourceConfiguration.getUsername());
+            LOG.info("Autonomous database configuration is missing for datasource: {}", datasourceConfiguration.getName());
             return datasourceConfiguration;
         }
 
