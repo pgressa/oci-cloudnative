@@ -252,10 +252,6 @@ resource "kubernetes_secret" "oos_bucket" {
 
 ## OCI Functions
 
-locals {
-  function_url = regex("^(?:(?P<scheme>[^:/?#]+):)?(?://(?P<authority>[^/?#]*))?", oci_apigateway_deployment.fn_newsletter_deployment[0].endpoint)
-}
-
 resource "kubernetes_service" "newsletter_svc" {
   metadata {
     name = var.newsletter_service_name

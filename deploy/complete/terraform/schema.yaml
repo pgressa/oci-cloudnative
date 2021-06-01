@@ -83,6 +83,12 @@ variableGroups:
     variables:
       - create_oracle_streaming_service_stream
 
+  - title: "Zipkin tracing to Oracle Application Performance Monitoring"
+    variables:
+      - apm_zipkin_enabled
+      - apm_zipkin_url
+      - apm_zipkin_path
+
   - title: "Cluster Utilities (MuShop Utilities)"
     variables:
     - grafana_enabled
@@ -589,7 +595,7 @@ variables:
     type: string
     title: "APM Zipkin url"
     description: "Copy here the APM domain Data Upload Endpoint."
-    required: false
+    required: true
     visible:
       and:
         - apm_zipkin_enabled
@@ -598,7 +604,7 @@ variables:
     type: string
     title: "APM Zipkin path"
     description: "The format is: \"/20200101/observations/public-span?dataFormat=zipkin&dataFormatVersion=2&dataKey=<APM DOMAIN PUBLIC DATA KEY>\""
-    required: false
+    required: true
     visible:
       and:
         - apm_zipkin_enabled

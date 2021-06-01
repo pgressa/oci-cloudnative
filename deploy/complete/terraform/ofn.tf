@@ -393,3 +393,8 @@ resource "oci_apigateway_deployment" "fn_newsletter_deployment" {
 
   count = var.create_oracle_function_newsletter ? 1 : 0
 }
+
+locals {
+  function_endpoint = var.create_oracle_function_newsletter ? oci_apigateway_deployment.fn_newsletter_deployment[0].endpoint : ""
+  function_url = regex("^(?:(?P<scheme>[^:/?#]+):)?(?://(?P<authority>[^/?#]*))?", local.function_endpoint)
+}

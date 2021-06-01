@@ -89,9 +89,11 @@ variable "apm_zipkin_enabled" {
 }
 
 variable "apm_zipkin_url" {
+  default = ""
 }
 
 variable "apm_zipkin_path" {
+  default = ""
 }
 
 variable "autonomous_database_db_version" {
