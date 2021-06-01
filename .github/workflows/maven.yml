@@ -81,5 +81,5 @@ jobs:
       - name: Push docker image - GraalVM Native Image
         working-directory: src/${{ matrix.project-path }}
         run: |
-          ./mvnw clean package deploy -Dpackaging=docker-native -Ddocker.image.suffix=native-2-5-0 --no-transfer-progress -Pgraalvm
+          ./mvnw clean deploy -Dpackaging=docker-native -Ddocker.image.suffix=native-2-5-0 --no-transfer-progress -Pgraalvm
           docker images --digests | grep -v "<none>" | grep carts-native
