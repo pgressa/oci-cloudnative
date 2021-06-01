@@ -55,10 +55,10 @@ dependencies {
     implementation("com.oracle.database.security:oraclepki")
     implementation("com.oracle.database.security:osdt_core")
     implementation("com.oracle.database.security:osdt_cert")
-    implementation("io.micronaut.sql:micronaut-jdbc-ucp")
+//    implementation("io.micronaut.sql:micronaut-jdbc-ucp")
     implementation("io.micronaut.data:micronaut-data-tx")
 
-//    implementation("io.micronaut.oraclecloud:micronaut-oraclecloud-atp")
+    implementation("io.micronaut.oraclecloud:micronaut-oraclecloud-atp")
     runtimeOnly("com.oracle.oci.sdk:oci-java-sdk-monitoring")
 
     // Tracing
