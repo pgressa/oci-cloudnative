@@ -14,7 +14,6 @@ import oracle.soda.OracleDatabase;
 import oracle.soda.OracleDocument;
 import oracle.soda.OracleException;
 import oracle.soda.rdbms.OracleRDBMSClient;
-import oracle.ucp.jdbc.PoolDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +21,6 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;

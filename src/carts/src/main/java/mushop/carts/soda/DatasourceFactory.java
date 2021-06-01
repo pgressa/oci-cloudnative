@@ -1,22 +1,19 @@
 package mushop.carts.soda;
 
-import io.micronaut.configuration.jdbc.ucp.DatasourceConfiguration;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.inject.qualifiers.Qualifiers;
+import io.micronaut.jdbc.BasicJdbcConfiguration;
 import io.micronaut.oraclecloud.atp.jdbc.AutonomousDatabaseConfiguration;
 import io.micronaut.oraclecloud.atp.jdbc.OracleWalletArchiveProvider;
 import io.micronaut.oraclecloud.atp.wallet.datasource.CanConfigureOracleDataSource;
-import io.micronaut.transaction.jdbc.DelegatingDataSource;
 import oracle.jdbc.datasource.impl.OracleDataSource;
-import oracle.ucp.jdbc.PoolDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,8 +38,8 @@ public class DatasourceFactory {
     }
 
     @Context
-    @EachBean(DatasourceConfiguration.class)
-    public OracleDataSource dataSource(DatasourceConfiguration datasourceConfiguration) {
+    @EachBean(BasicJdbcConfiguration.class)
+    public OracleDataSource dataSource(BasicJdbcConfiguration datasourceConfiguration) {
 
         AutonomousDatabaseConfiguration autonomousDatabaseConfiguration = applicationContext.findBean(AutonomousDatabaseConfiguration.class,
                 Qualifiers.byName(datasourceConfiguration.getName())).orElse(null);
@@ -79,7 +76,7 @@ public class DatasourceFactory {
         }
     }
 
-    private OracleDataSource createDataSource(DatasourceConfiguration datasourceConfiguration, CanConfigureOracleDataSource walletArchive) throws SQLException, IOException {
+    private OracleDataSource createDataSource(BasicJdbcConfiguration datasourceConfiguration, CanConfigureOracleDataSource walletArchive) throws SQLException, IOException {
         OracleDataSource oracleDataSource = new OracleDataSource();
         if (walletArchive != null) {
             walletArchive.configure(oracleDataSource);
