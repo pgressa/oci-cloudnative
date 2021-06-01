@@ -3,6 +3,7 @@ package mushop.carts.soda;
 import io.micronaut.configuration.jdbc.ucp.DatasourceConfiguration;
 import io.micronaut.context.BeanLocator;
 import io.micronaut.context.annotation.Context;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.BeanCreatedEvent;
 import io.micronaut.context.event.BeanCreatedEventListener;
 import io.micronaut.core.annotation.Nullable;
@@ -19,10 +20,11 @@ import javax.inject.Singleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
+@Requires(classes = DatasourceConfiguration.class)
 @Context
 @Singleton
-public class SodaPermissionDatasourceConfigurationListener implements BeanCreatedEventListener<DatasourceConfiguration> {
-    private static final Logger LOG = LoggerFactory.getLogger(SodaPermissionDatasourceConfigurationListener.class);
+public class UcpSodaPermissionDatasourceConfigurationListener implements BeanCreatedEventListener<DatasourceConfiguration> {
+    private static final Logger LOG = LoggerFactory.getLogger(UcpSodaPermissionDatasourceConfigurationListener.class);
 
     private final OracleWalletArchiveProvider walletArchiveProvider;
     private final BeanLocator beanLocator;
@@ -33,7 +35,7 @@ public class SodaPermissionDatasourceConfigurationListener implements BeanCreate
      * @param walletArchiveProvider The wallet archive provider
      * @param beanLocator           The bean locator
      */
-    public SodaPermissionDatasourceConfigurationListener(@Nullable OracleWalletArchiveProvider walletArchiveProvider, BeanLocator beanLocator) {
+    public UcpSodaPermissionDatasourceConfigurationListener(@Nullable OracleWalletArchiveProvider walletArchiveProvider, BeanLocator beanLocator) {
         this.walletArchiveProvider = walletArchiveProvider;
         this.beanLocator = beanLocator;
     }
