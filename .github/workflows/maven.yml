@@ -44,7 +44,6 @@ jobs:
         env:
           TESTCONTAINERS_RYUK_DISABLED: true
   push-docker-images:
-    if: success() && github.event_name == 'push'
     needs: build
     runs-on: self-hosted
     strategy:
