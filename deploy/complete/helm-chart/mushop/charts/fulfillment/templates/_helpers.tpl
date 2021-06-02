@@ -47,7 +47,7 @@ run: {{ include "fulfillment.name" . }}
 
 {/* OAPM Connection url */}}
 {{- define "fulfillment.oapm.connection" -}}
-{{- $oapmConnection := .Values.oapmConnectionSecret | default (.Values.global.oapmConnectionSecret | default (printf "%s-oapm-connection" .Chart.Name)) -}}
+{{- $oapmConnection := .Values.oapmConnectionSecret | default (.Values.global.oapmConnectionSecret | default (printf "%s-oapm-connection" .Release.Name)) -}}
 - name: ORACLECLOUD_TRACING_ZIPKIN_HTTP_URL
   valueFrom:
     secretKeyRef:
