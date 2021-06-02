@@ -107,3 +107,15 @@ Then edit the `mushop.tfvars`:
     ```
     
     To access MuShop use the `mushop_url_https` output variable.
+
+## Cleanup
+
+Destroy the resources by:
+
+```bash
+# From this directory
+terraform destroy
+
+# From repository root directory
+terraform destroy -chdir deploy/complete/terraform
+```
