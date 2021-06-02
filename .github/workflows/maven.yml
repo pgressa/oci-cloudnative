@@ -39,7 +39,7 @@ jobs:
           logout: false
       - name: Push docker image - GraalVM
         working-directory: src/${{ matrix.project-path }}
-        run: ./mvnw deploy -Dpackaging=docker -Djib.from.image=ghcr.io/graalvm/graalvm-ce:java11-21.1.0 -Ddocker.image.suffix=graalvm --no-transfer-progress
+        run: ./mvnw deploy -Dpackaging=docker -Djib.useOnlyProjectCache=true -Djib.from.image=ghcr.io/graalvm/graalvm-ce:java11-21.1.0 -Ddocker.image.suffix=graalvm --no-transfer-progress
       - name: Push docker image - OpenJdk
         working-directory: src/${{ matrix.project-path }}
         run: ./mvnw deploy -Dpackaging=docker --no-transfer-progress
