@@ -7,7 +7,6 @@ image:
 
 env:
   mediaUrl: /assets
-  newsletterSubscribeUrl:
 
 hpa:
   enabled: true

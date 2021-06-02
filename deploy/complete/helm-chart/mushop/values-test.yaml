@@ -4,8 +4,7 @@ global:
   oadbAdminSecret: oadb-admin           # Name of DB Admin secret created earlier
   oadbWalletSecret: oadb-wallet         # Name of wallet secret created earlier
   oadbConnectionSecret: oadb-connection # Name of connection secret created earlier
-  mock:
-    service: "false"
+  oapmConnectionSecret: oapm-connection # Name of application monitoring secret created earlier
 
 ingress:
   enabled: true
