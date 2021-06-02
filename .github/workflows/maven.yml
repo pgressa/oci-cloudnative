@@ -10,41 +10,7 @@ on:
 env:
   JAVA: '11'
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        project-path: [
-            'carts'
-        ]
-    steps:
-      # https://github.com/actions/virtual-environments/issues/709
-      - name: Free disk space
-        run: |
-          sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-          sudo apt-get clean
-          df -h
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2.1.4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: ${{ env.JAVA }}
-      - name: Build with Maven
-        working-directory: src/${{ matrix.project-path }}
-        run: |
-          ./mvnw test --no-transfer-progress
-        env:
-          TESTCONTAINERS_RYUK_DISABLED: true
   push-docker-images:
-    needs: build
     runs-on: self-hosted
     strategy:
       matrix:
