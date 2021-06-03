@@ -27,13 +27,13 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @Testcontainers
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -172,7 +172,9 @@ public class CartsServiceAnonymousTest extends AbstractDatabaseServiceTest {
 
     @Override
     protected GenericContainer<?> initService() {
-        return new GenericContainer<>(composeServiceDockerImage()).withExposedPorts(getServiceExposedPort())
+        return new GenericContainer<>(
+                DockerImageName.parse("iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/" + getServiceId() + ":" + getServiceVersion())
+        ).withExposedPorts(getServiceExposedPort())
                 .withNetwork(Network.SHARED)
                 .withEnv(Map.of(
                         "DATASOURCES_DEFAULT_URL", "jdbc:oracle:thin:system/oracle@oracledb:1521:xe",
