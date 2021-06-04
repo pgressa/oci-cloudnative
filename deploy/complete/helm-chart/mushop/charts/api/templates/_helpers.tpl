@@ -64,6 +64,11 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
       key: zipkin_enabled
 {{- end -}}
 
+{{- define "api.streaming" -}}
+- name: TRACKING_ENABLED
+  value: {{ .Values.env.trackingEnabled | quote }}
+{{- end -}}
+
 {{/* OIMS configuration */}}
 {{- define "api.oims.config" -}}
 {{- $ociDeployment := .Values.ociDeploymentConfigMap | default (.Values.global.ociDeploymentConfigMap | default (printf "%s-oci-deployment" .Chart.Name)) -}}
