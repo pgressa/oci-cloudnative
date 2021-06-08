@@ -139,8 +139,9 @@ jobs:
           grep -B 1 -e "services:" -e 'graalvm' docker-compose.yml | sed -E "s/(.*):(.*):(.*)/\1:\2:$GITHUB_SHA/g" | grep -v -e '--' > docker-compose.override.yml
           cat docker-compose.override.yml
 
-          docker-compose up -d
+          docker-compose up -d --renew-anon-volumes --force-recreate
           docker-compose ps
+          docker-compose logs
       - name: Run test
         working-directory: src/load
         run: |
@@ -151,6 +152,8 @@ jobs:
         working-directory: deploy/complete/docker-compose
         run: |
           docker-compose down -t 300
+          docker volume prune -f
+          docker image prune -f
   push-docker-images:
     if: success() && github.event_name == 'push'
     needs: docker-compose-test
