@@ -122,6 +122,7 @@ jobs:
           grep -B 1 -e "services:" -e 'graalvm' docker-compose.yml | sed -E "s/(.*):(.*):(.*)/\1:\2:$GITHUB_SHA/g" | grep -v -e '--' > docker-compose.override.yml
           cat docker-compose.override.yml
 
+          docker-compose pull
           docker-compose up -d --renew-anon-volumes --force-recreate
           docker-compose ps
 
