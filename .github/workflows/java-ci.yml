@@ -143,6 +143,10 @@ jobs:
 
           docker-compose up -d --renew-anon-volumes --force-recreate
           docker-compose ps
+
+          #
+          # wait 10 seconds to let the containers initalize
+          sleep 10
           docker-compose logs
       - name: Run test
         working-directory: src/load
