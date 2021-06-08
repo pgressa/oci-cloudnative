@@ -209,6 +209,8 @@ services:
     cap_add:
       - NET_BIND_SERVICE
     read_only: true
+    environment:
+      - PAYMENT_DECLINE_AMOUNT=1000
     logging:
       driver: "json-file"
       options:
