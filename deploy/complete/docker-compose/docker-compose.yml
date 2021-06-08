@@ -251,4 +251,4 @@ services:
     image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/oracle-database:18.4.0-xe
     restart: always
     volumes:
-      - ./dbinit:/opt/oracle/scripts/setup
+      - ./dbinit:/opt/oracle/scripts/startup
