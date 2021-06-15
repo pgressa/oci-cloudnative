@@ -48,9 +48,8 @@ jobs:
           fi
         env:
           TESTCONTAINERS_RYUK_DISABLED: true
-  build-docker-images:
-    # TODO: Run only on push
-    if: success()
+  build-docker-compose-test-images:
+    if: success() && github.event_name == 'push'
     needs: build
     runs-on: ubuntu-latest
     strategy:
@@ -95,9 +94,8 @@ jobs:
             ./gradlew dockerPush -Pversion=$GITHUB_SHA --no-daemon
           fi
   docker-compose-test:
-    # TODO: Run only on push
-    if: success()
-    needs: build-docker-images
+    if: success() && github.event_name == 'push'
+    needs: build-docker-compose-test-images
     runs-on: self-hosted
     steps:
       - uses: AutoModality/action-clean@v1
