@@ -49,7 +49,7 @@ jobs:
         env:
           TESTCONTAINERS_RYUK_DISABLED: true
   build-docker-compose-test-images:
-    if: success() && github.event_name == 'push'
+    if: success()
     needs: build
     runs-on: ubuntu-latest
     strategy:
@@ -94,7 +94,7 @@ jobs:
             ./gradlew dockerPush -Pversion=$GITHUB_SHA --no-daemon
           fi
   docker-compose-test:
-    if: success() && github.event_name == 'push'
+    if: success()
     needs: build-docker-compose-test-images
     runs-on: self-hosted
     steps:
