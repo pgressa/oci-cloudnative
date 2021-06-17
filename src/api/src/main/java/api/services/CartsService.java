@@ -60,8 +60,7 @@ public class CartsService {
     @Tag(name="cart") 
     @Get(value = "/cart", produces = MediaType.APPLICATION_JSON)
     Single<List<CartItem>> getCart(@Parameter(hidden = true) @CartId UUID cartID) {
-        return client.getCartItems(cartID)
-                .onErrorReturnItem(Collections.emptyList());
+        return client.getCartItems(cartID);
     }
 
     /**

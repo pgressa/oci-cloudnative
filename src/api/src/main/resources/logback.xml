@@ -15,4 +15,7 @@
 
     <logger name="api" level="trace" />
     <logger name="io.micronaut.http" level="debug"/>
+    <logger name="io.micronaut.security" level="trace"/>
+    <logger name="io.lettuce" level="trace"/>
+    <logger name="io.micronaut.configuration.lettuce" level="trace"/>
 </configuration>

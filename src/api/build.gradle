@@ -6,6 +6,7 @@ plugins {
 group = "micronaut.mushop"
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -75,6 +76,10 @@ if (javaBaseImage == "graalvm") {
     dockerfile {
         baseImage = "ghcr.io/graalvm/graalvm-ce:ol8-java11-21.1.0"
     }
+}
+
+nativeImage{
+    verbose(true)
 }
 
 dockerBuild {

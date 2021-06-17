@@ -19,7 +19,7 @@ services:
 
   # Storefront application middleware
   api:
-    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/api-graalvm:1.0.0
+    image: iad.ocir.io/cloudnative-devrel/micronaut-showcase/mushop/api-native:1.0.1-SNAPSHOT
     hostname: api
     restart: always
     pull_policy: always
@@ -27,7 +27,6 @@ services:
       - all
     cap_add:
       - NET_BIND_SERVICE
-    read_only: true
     environment:
       - MICRONAUT_ENV_DEDUCTION=false
       - MICRONAUT_HTTP_SERVICES_MUSHOP-CATALOGUE_URL=http://catalogue:8080
