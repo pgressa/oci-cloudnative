@@ -31,7 +31,7 @@ variableGroups:
 
   - title: "Micronaut MuShop"
     variables:
-      - mushop_micronaut_service_version
+    - mushop_micronaut_service_version
     
   - title: "OKE Cluster Configuration"
     variables:

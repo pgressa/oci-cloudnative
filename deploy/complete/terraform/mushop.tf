@@ -50,6 +50,10 @@ resource "helm_release" "mushop" {
     value = var.oci_deployment
   }
   set {
+    name  = "global.imageSuffix"
+    value = var.mushop_micronaut_service_version
+  }
+  set {
     name  = "api.env.trackingEnabled"
     value = var.create_oracle_streaming_service_stream ? true : false
   }
