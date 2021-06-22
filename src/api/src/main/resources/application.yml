@@ -36,7 +36,7 @@ micronaut:
   session:
     http:
       redis:
-        enabled: true
+        enabled: false
         namespace: 'mushop:sessions'
         write-mode: BACKGROUND
         enable-keyspace-events: false
