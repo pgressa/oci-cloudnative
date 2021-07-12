@@ -46,7 +46,7 @@ class CatalogueController implements CatalogueOperations {
     @Get("/categories")
     @Timed("category.list")
     @CircuitBreaker(reset = "30s")
-    @Cacheable
+    @Cacheable("categories")
     public CategoriesDTO listCategories() {
         return new CategoriesDTO(categoryRepository.listName());
     }
